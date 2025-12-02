@@ -1,0 +1,1285 @@
+<!DOCTYPE html>
+<html>
+<head>
+    
+    <meta http-equiv="content-type" content="text/html; charset=UTF-8" />
+    <script src="https://cdn.jsdelivr.net/npm/leaflet@1.9.3/dist/leaflet.js"></script>
+    <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.2/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/Leaflet.awesome-markers/2.0.2/leaflet.awesome-markers.js"></script>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/leaflet@1.9.3/dist/leaflet.css"/>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.2.2/dist/css/bootstrap.min.css"/>
+    <link rel="stylesheet" href="https://netdna.bootstrapcdn.com/bootstrap/3.0.0/css/bootstrap-glyphicons.css"/>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@6.2.0/css/all.min.css"/>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/Leaflet.awesome-markers/2.0.2/leaflet.awesome-markers.css"/>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/python-visualization/folium/folium/templates/leaflet.awesome.rotate.min.css"/>
+    
+            <meta name="viewport" content="width=device-width,
+                initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+            <style>
+                #map_7eded5b890cbe3cfd2de54f01c037379 {
+                    position: relative;
+                    width: 100.0%;
+                    height: 100.0%;
+                    left: 0.0%;
+                    top: 0.0%;
+                }
+                .leaflet-container { font-size: 1rem; }
+            </style>
+
+            <style>html, body {
+                width: 100%;
+                height: 100%;
+                margin: 0;
+                padding: 0;
+            }
+            </style>
+
+            <style>#map {
+                position:absolute;
+                top:0;
+                bottom:0;
+                right:0;
+                left:0;
+                }
+            </style>
+
+            <script>
+                L_NO_TOUCH = false;
+                L_DISABLE_3D = false;
+            </script>
+
+        
+</head>
+<body>
+    
+    
+<div style="position: fixed;
+            bottom: 50px; right: 50px; width: 280px; height: auto;
+            background-color: white; border:3px solid grey; z-index:9999;
+            font-size:14px; padding: 15px; border-radius: 10px;
+            box-shadow: 0 0 15px rgba(0,0,0,0.2);">
+<p style="margin-bottom:10px; font-size:16px; font-weight:bold; text-align:center;">
+    세종시 버스 정류장 최적화
+</p>
+<p style="margin:5px 0;"><i class="fa fa-star" style="color:red"></i>
+   <b style="color:red;">신규 정류장 (권장)</b></p>
+<p style="margin:5px 0;"><i class="fa fa-check" style="color:green"></i>
+   <b style="color:green;">커버되는 지역</b></p>
+<p style="margin:5px 0;"><i class="fa fa-info-circle" style="color:gray"></i>
+   <b style="color:gray;">미커버 지역</b></p>
+<hr style="margin: 10px 0;">
+<p style="margin:3px 0; font-size:12px;">• 원 크기 = 이용객 수</p>
+<p style="margin:3px 0; font-size:12px;">• 붉은 점선 = 커버리지 반경 (2.0km)</p>
+<p style="margin:3px 0; font-size:12px;">• 커버리지: <b>95.5%</b></p>
+</div>
+    
+            <div class="folium-map" id="map_7eded5b890cbe3cfd2de54f01c037379" ></div>
+        
+</body>
+<script>
+    
+    
+            var map_7eded5b890cbe3cfd2de54f01c037379 = L.map(
+                "map_7eded5b890cbe3cfd2de54f01c037379",
+                {
+                    center: [36.53502857142856, 127.28214285714287],
+                    crs: L.CRS.EPSG3857,
+                    ...{
+  "zoom": 11,
+  "zoomControl": true,
+  "preferCanvas": false,
+}
+
+                }
+            );
+
+            
+
+        
+    
+            var tile_layer_3f85418cd9d81e307ab127992e3fcd0e = L.tileLayer(
+                "https://tile.openstreetmap.org/{z}/{x}/{y}.png",
+                {
+  "minZoom": 0,
+  "maxZoom": 19,
+  "maxNativeZoom": 19,
+  "noWrap": false,
+  "attribution": "\u0026copy; \u003ca href=\"https://www.openstreetmap.org/copyright\"\u003eOpenStreetMap\u003c/a\u003e contributors",
+  "subdomains": "abc",
+  "detectRetina": false,
+  "tms": false,
+  "opacity": 1,
+}
+
+            );
+        
+    
+            tile_layer_3f85418cd9d81e307ab127992e3fcd0e.addTo(map_7eded5b890cbe3cfd2de54f01c037379);
+        
+    
+            var marker_6fda31db1828ee27f41a7e76c2ea1acc = L.marker(
+                [36.5912, 127.2897],
+                {
+}
+            ).addTo(map_7eded5b890cbe3cfd2de54f01c037379);
+        
+    
+            var icon_19ccded04eee02195c2526795651ddb2 = L.AwesomeMarkers.icon(
+                {
+  "markerColor": "red",
+  "iconColor": "white",
+  "icon": "star",
+  "prefix": "fa",
+  "extraClasses": "fa-rotate-0",
+}
+            );
+        
+    
+        var popup_58b53d97f04a577d31a4155c3974ee8a = L.popup({
+  "maxWidth": 300,
+});
+
+        
+            
+                var html_00b0abfb63d6cca6463270f0ec77b7d8 = $(`<div id="html_00b0abfb63d6cca6463270f0ec77b7d8" style="width: 100.0%; height: 100.0%;">         <div style="font-family: Arial, sans-serif; width: 250px;">             <h4 style="color: red; margin-bottom: 10px;">⭐ 신규 정류장</h4>             <table style="width: 100%; font-size: 12px;">                 <tr><td><b>지역:</b></td><td>조치원읍</td></tr>                 <tr><td><b>총 이용객:</b></td><td>11,330,610명</td></tr>                 <tr><td><b>일평균:</b></td><td>31,043명</td></tr>                 <tr><td><b>좌표:</b></td><td>36.5912, 127.2897</td></tr>             </table>         </div>         </div>`)[0];
+                popup_58b53d97f04a577d31a4155c3974ee8a.setContent(html_00b0abfb63d6cca6463270f0ec77b7d8);
+            
+        
+
+        marker_6fda31db1828ee27f41a7e76c2ea1acc.bindPopup(popup_58b53d97f04a577d31a4155c3974ee8a)
+        ;
+
+        
+    
+    
+            marker_6fda31db1828ee27f41a7e76c2ea1acc.bindTooltip(
+                `<div>
+                     조치원읍 (11,330,610명)
+                 </div>`,
+                {
+  "sticky": true,
+}
+            );
+        
+    
+                marker_6fda31db1828ee27f41a7e76c2ea1acc.setIcon(icon_19ccded04eee02195c2526795651ddb2);
+            
+    
+            var circle_f2f001b2c05a4657f3551bf9d54daa96 = L.circle(
+                [36.5912, 127.2897],
+                {"bubblingMouseEvents": true, "color": "red", "dashArray": null, "dashOffset": null, "fill": true, "fillColor": "red", "fillOpacity": 0.2, "fillRule": "evenodd", "lineCap": "round", "lineJoin": "round", "opacity": 0.5, "radius": 377687.0, "stroke": true, "weight": 3}
+            ).addTo(map_7eded5b890cbe3cfd2de54f01c037379);
+        
+    
+            var circle_38b1d118a645d7c17c1cc6ed4240d52c = L.circle(
+                [36.5912, 127.2897],
+                {"bubblingMouseEvents": true, "color": "red", "dashArray": "5, 5", "dashOffset": null, "fill": true, "fillColor": "red", "fillOpacity": 0.1, "fillRule": "evenodd", "lineCap": "round", "lineJoin": "round", "opacity": 0.3, "radius": 2000.0, "stroke": true, "weight": 3}
+            ).addTo(map_7eded5b890cbe3cfd2de54f01c037379);
+        
+    
+            var marker_e654cdddac58a609cd6f25519fd1038c = L.marker(
+                [36.4984, 127.2666],
+                {
+}
+            ).addTo(map_7eded5b890cbe3cfd2de54f01c037379);
+        
+    
+            var icon_2def318efc5ec3b26c90d60c2ecb6a41 = L.AwesomeMarkers.icon(
+                {
+  "markerColor": "green",
+  "iconColor": "white",
+  "icon": "check",
+  "prefix": "fa",
+  "extraClasses": "fa-rotate-0",
+}
+            );
+        
+    
+        var popup_87cfe73bd65d4607fd8e601aa505e02f = L.popup({
+  "maxWidth": 300,
+});
+
+        
+            
+                var html_4611819b3d414346d6310c46bff61ead = $(`<div id="html_4611819b3d414346d6310c46bff61ead" style="width: 100.0%; height: 100.0%;">         <div style="font-family: Arial, sans-serif; width: 250px;">             <h4 style="color: green; margin-bottom: 10px;">✓ 커버됨</h4>             <table style="width: 100%; font-size: 12px;">                 <tr><td><b>지역:</b></td><td>도담동</td></tr>                 <tr><td><b>총 이용객:</b></td><td>9,410,569명</td></tr>                 <tr><td><b>최근접 정류장:</b></td><td>가람동</td></tr>                 <tr><td><b>거리:</b></td><td>0.44km</td></tr>             </table>         </div>         </div>`)[0];
+                popup_87cfe73bd65d4607fd8e601aa505e02f.setContent(html_4611819b3d414346d6310c46bff61ead);
+            
+        
+
+        marker_e654cdddac58a609cd6f25519fd1038c.bindPopup(popup_87cfe73bd65d4607fd8e601aa505e02f)
+        ;
+
+        
+    
+    
+            marker_e654cdddac58a609cd6f25519fd1038c.bindTooltip(
+                `<div>
+                     도담동 (9,410,569명)
+                 </div>`,
+                {
+  "sticky": true,
+}
+            );
+        
+    
+                marker_e654cdddac58a609cd6f25519fd1038c.setIcon(icon_2def318efc5ec3b26c90d60c2ecb6a41);
+            
+    
+            var circle_1310f47f385f529426cf883cca50cd4d = L.circle(
+                [36.4984, 127.2666],
+                {"bubblingMouseEvents": true, "color": "green", "dashArray": null, "dashOffset": null, "fill": true, "fillColor": "green", "fillOpacity": 0.2, "fillRule": "evenodd", "lineCap": "round", "lineJoin": "round", "opacity": 0.5, "radius": 313685.63333333336, "stroke": true, "weight": 3}
+            ).addTo(map_7eded5b890cbe3cfd2de54f01c037379);
+        
+    
+            var marker_d9c1dad0dac1f623b655b3a7ae989a22 = L.marker(
+                [36.5125, 127.2792],
+                {
+}
+            ).addTo(map_7eded5b890cbe3cfd2de54f01c037379);
+        
+    
+            var icon_8b9523864bf225cd5afc7b5750618a7d = L.AwesomeMarkers.icon(
+                {
+  "markerColor": "red",
+  "iconColor": "white",
+  "icon": "star",
+  "prefix": "fa",
+  "extraClasses": "fa-rotate-0",
+}
+            );
+        
+    
+        var popup_098a42cf6d2d21bf70f4645741144eb4 = L.popup({
+  "maxWidth": 300,
+});
+
+        
+            
+                var html_9c95012557cdb452e6a5c4c644254fb0 = $(`<div id="html_9c95012557cdb452e6a5c4c644254fb0" style="width: 100.0%; height: 100.0%;">         <div style="font-family: Arial, sans-serif; width: 250px;">             <h4 style="color: red; margin-bottom: 10px;">⭐ 신규 정류장</h4>             <table style="width: 100%; font-size: 12px;">                 <tr><td><b>지역:</b></td><td>어진동</td></tr>                 <tr><td><b>총 이용객:</b></td><td>7,967,642명</td></tr>                 <tr><td><b>일평균:</b></td><td>21,829명</td></tr>                 <tr><td><b>좌표:</b></td><td>36.5125, 127.2792</td></tr>             </table>         </div>         </div>`)[0];
+                popup_098a42cf6d2d21bf70f4645741144eb4.setContent(html_9c95012557cdb452e6a5c4c644254fb0);
+            
+        
+
+        marker_d9c1dad0dac1f623b655b3a7ae989a22.bindPopup(popup_098a42cf6d2d21bf70f4645741144eb4)
+        ;
+
+        
+    
+    
+            marker_d9c1dad0dac1f623b655b3a7ae989a22.bindTooltip(
+                `<div>
+                     어진동 (7,967,642명)
+                 </div>`,
+                {
+  "sticky": true,
+}
+            );
+        
+    
+                marker_d9c1dad0dac1f623b655b3a7ae989a22.setIcon(icon_8b9523864bf225cd5afc7b5750618a7d);
+            
+    
+            var circle_6fdf3d74c29484a8d04d9a90606e84f3 = L.circle(
+                [36.5125, 127.2792],
+                {"bubblingMouseEvents": true, "color": "red", "dashArray": null, "dashOffset": null, "fill": true, "fillColor": "red", "fillOpacity": 0.2, "fillRule": "evenodd", "lineCap": "round", "lineJoin": "round", "opacity": 0.5, "radius": 265588.06666666665, "stroke": true, "weight": 3}
+            ).addTo(map_7eded5b890cbe3cfd2de54f01c037379);
+        
+    
+            var circle_3b16a9c0511f86ccca01755d45701adf = L.circle(
+                [36.5125, 127.2792],
+                {"bubblingMouseEvents": true, "color": "red", "dashArray": "5, 5", "dashOffset": null, "fill": true, "fillColor": "red", "fillOpacity": 0.1, "fillRule": "evenodd", "lineCap": "round", "lineJoin": "round", "opacity": 0.3, "radius": 2000.0, "stroke": true, "weight": 3}
+            ).addTo(map_7eded5b890cbe3cfd2de54f01c037379);
+        
+    
+            var marker_d6d180538966923eae7c6ab601614a4e = L.marker(
+                [36.5121, 127.2636],
+                {
+}
+            ).addTo(map_7eded5b890cbe3cfd2de54f01c037379);
+        
+    
+            var icon_18778fd57761c21a3dc3675d91c552d5 = L.AwesomeMarkers.icon(
+                {
+  "markerColor": "green",
+  "iconColor": "white",
+  "icon": "check",
+  "prefix": "fa",
+  "extraClasses": "fa-rotate-0",
+}
+            );
+        
+    
+        var popup_aecca06a1a26fd5309064345274498b5 = L.popup({
+  "maxWidth": 300,
+});
+
+        
+            
+                var html_1c438164b27bbacd167b645c032e5fc3 = $(`<div id="html_1c438164b27bbacd167b645c032e5fc3" style="width: 100.0%; height: 100.0%;">         <div style="font-family: Arial, sans-serif; width: 250px;">             <h4 style="color: green; margin-bottom: 10px;">✓ 커버됨</h4>             <table style="width: 100%; font-size: 12px;">                 <tr><td><b>지역:</b></td><td>한솔동</td></tr>                 <tr><td><b>총 이용객:</b></td><td>6,267,806명</td></tr>                 <tr><td><b>최근접 정류장:</b></td><td>가람동</td></tr>                 <tr><td><b>거리:</b></td><td>1.25km</td></tr>             </table>         </div>         </div>`)[0];
+                popup_aecca06a1a26fd5309064345274498b5.setContent(html_1c438164b27bbacd167b645c032e5fc3);
+            
+        
+
+        marker_d6d180538966923eae7c6ab601614a4e.bindPopup(popup_aecca06a1a26fd5309064345274498b5)
+        ;
+
+        
+    
+    
+            marker_d6d180538966923eae7c6ab601614a4e.bindTooltip(
+                `<div>
+                     한솔동 (6,267,806명)
+                 </div>`,
+                {
+  "sticky": true,
+}
+            );
+        
+    
+                marker_d6d180538966923eae7c6ab601614a4e.setIcon(icon_18778fd57761c21a3dc3675d91c552d5);
+            
+    
+            var circle_fb56849c2cce412b178e3fdeb9b9a80d = L.circle(
+                [36.5121, 127.2636],
+                {"bubblingMouseEvents": true, "color": "green", "dashArray": null, "dashOffset": null, "fill": true, "fillColor": "green", "fillOpacity": 0.2, "fillRule": "evenodd", "lineCap": "round", "lineJoin": "round", "opacity": 0.5, "radius": 208926.86666666667, "stroke": true, "weight": 3}
+            ).addTo(map_7eded5b890cbe3cfd2de54f01c037379);
+        
+    
+            var marker_30cfffef16b6bd795e3fc52fdbab0246 = L.marker(
+                [36.5114, 127.2712],
+                {
+}
+            ).addTo(map_7eded5b890cbe3cfd2de54f01c037379);
+        
+    
+            var icon_6d97ce00a54bb2122f706c9b4dfdb696 = L.AwesomeMarkers.icon(
+                {
+  "markerColor": "green",
+  "iconColor": "white",
+  "icon": "check",
+  "prefix": "fa",
+  "extraClasses": "fa-rotate-0",
+}
+            );
+        
+    
+        var popup_19257c497d796f2fd87e5f9e843f2b1e = L.popup({
+  "maxWidth": 300,
+});
+
+        
+            
+                var html_2a032139f6b2afb0fc531bec8bd7c3a0 = $(`<div id="html_2a032139f6b2afb0fc531bec8bd7c3a0" style="width: 100.0%; height: 100.0%;">         <div style="font-family: Arial, sans-serif; width: 250px;">             <h4 style="color: green; margin-bottom: 10px;">✓ 커버됨</h4>             <table style="width: 100%; font-size: 12px;">                 <tr><td><b>지역:</b></td><td>아름동</td></tr>                 <tr><td><b>총 이용객:</b></td><td>5,157,311명</td></tr>                 <tr><td><b>최근접 정류장:</b></td><td>어진동</td></tr>                 <tr><td><b>거리:</b></td><td>0.73km</td></tr>             </table>         </div>         </div>`)[0];
+                popup_19257c497d796f2fd87e5f9e843f2b1e.setContent(html_2a032139f6b2afb0fc531bec8bd7c3a0);
+            
+        
+
+        marker_30cfffef16b6bd795e3fc52fdbab0246.bindPopup(popup_19257c497d796f2fd87e5f9e843f2b1e)
+        ;
+
+        
+    
+    
+            marker_30cfffef16b6bd795e3fc52fdbab0246.bindTooltip(
+                `<div>
+                     아름동 (5,157,311명)
+                 </div>`,
+                {
+  "sticky": true,
+}
+            );
+        
+    
+                marker_30cfffef16b6bd795e3fc52fdbab0246.setIcon(icon_6d97ce00a54bb2122f706c9b4dfdb696);
+            
+    
+            var circle_c06c44c3d4d478ebb304c133ee9e427d = L.circle(
+                [36.5114, 127.2712],
+                {"bubblingMouseEvents": true, "color": "green", "dashArray": null, "dashOffset": null, "fill": true, "fillColor": "green", "fillOpacity": 0.2, "fillRule": "evenodd", "lineCap": "round", "lineJoin": "round", "opacity": 0.5, "radius": 171910.36666666667, "stroke": true, "weight": 3}
+            ).addTo(map_7eded5b890cbe3cfd2de54f01c037379);
+        
+    
+            var marker_1e519ae07f410d10eb74ee29b4bd6939 = L.marker(
+                [36.5046, 127.2586],
+                {
+}
+            ).addTo(map_7eded5b890cbe3cfd2de54f01c037379);
+        
+    
+            var icon_cfbe59040b9dff63e8e01e605d7a224d = L.AwesomeMarkers.icon(
+                {
+  "markerColor": "green",
+  "iconColor": "white",
+  "icon": "check",
+  "prefix": "fa",
+  "extraClasses": "fa-rotate-0",
+}
+            );
+        
+    
+        var popup_9dbecec135b96de3ec61e0cb4a8600a1 = L.popup({
+  "maxWidth": 300,
+});
+
+        
+            
+                var html_ec4ca8f152680c0baa38e41be75b3457 = $(`<div id="html_ec4ca8f152680c0baa38e41be75b3457" style="width: 100.0%; height: 100.0%;">         <div style="font-family: Arial, sans-serif; width: 250px;">             <h4 style="color: green; margin-bottom: 10px;">✓ 커버됨</h4>             <table style="width: 100%; font-size: 12px;">                 <tr><td><b>지역:</b></td><td>고운동</td></tr>                 <tr><td><b>총 이용객:</b></td><td>4,307,169명</td></tr>                 <tr><td><b>최근접 정류장:</b></td><td>가람동</td></tr>                 <tr><td><b>거리:</b></td><td>0.56km</td></tr>             </table>         </div>         </div>`)[0];
+                popup_9dbecec135b96de3ec61e0cb4a8600a1.setContent(html_ec4ca8f152680c0baa38e41be75b3457);
+            
+        
+
+        marker_1e519ae07f410d10eb74ee29b4bd6939.bindPopup(popup_9dbecec135b96de3ec61e0cb4a8600a1)
+        ;
+
+        
+    
+    
+            marker_1e519ae07f410d10eb74ee29b4bd6939.bindTooltip(
+                `<div>
+                     고운동 (4,307,169명)
+                 </div>`,
+                {
+  "sticky": true,
+}
+            );
+        
+    
+                marker_1e519ae07f410d10eb74ee29b4bd6939.setIcon(icon_cfbe59040b9dff63e8e01e605d7a224d);
+            
+    
+            var circle_b68e63fe6ed6d6f226848ba07121ce8a = L.circle(
+                [36.5046, 127.2586],
+                {"bubblingMouseEvents": true, "color": "green", "dashArray": null, "dashOffset": null, "fill": true, "fillColor": "green", "fillOpacity": 0.2, "fillRule": "evenodd", "lineCap": "round", "lineJoin": "round", "opacity": 0.5, "radius": 143572.3, "stroke": true, "weight": 3}
+            ).addTo(map_7eded5b890cbe3cfd2de54f01c037379);
+        
+    
+            var marker_b4bf9de20c76daa32de844d505128cf3 = L.marker(
+                [36.5144, 127.284],
+                {
+}
+            ).addTo(map_7eded5b890cbe3cfd2de54f01c037379);
+        
+    
+            var icon_7b88ae2dd2b4e4f9d6acb5919f0a496e = L.AwesomeMarkers.icon(
+                {
+  "markerColor": "green",
+  "iconColor": "white",
+  "icon": "check",
+  "prefix": "fa",
+  "extraClasses": "fa-rotate-0",
+}
+            );
+        
+    
+        var popup_51a72e2a1902f7810b2736b786d2ca24 = L.popup({
+  "maxWidth": 300,
+});
+
+        
+            
+                var html_dd3f641e77fe7b2aa27d7eb703092001 = $(`<div id="html_dd3f641e77fe7b2aa27d7eb703092001" style="width: 100.0%; height: 100.0%;">         <div style="font-family: Arial, sans-serif; width: 250px;">             <h4 style="color: green; margin-bottom: 10px;">✓ 커버됨</h4>             <table style="width: 100%; font-size: 12px;">                 <tr><td><b>지역:</b></td><td>대평동</td></tr>                 <tr><td><b>총 이용객:</b></td><td>3,810,420명</td></tr>                 <tr><td><b>최근접 정류장:</b></td><td>어진동</td></tr>                 <tr><td><b>거리:</b></td><td>0.48km</td></tr>             </table>         </div>         </div>`)[0];
+                popup_51a72e2a1902f7810b2736b786d2ca24.setContent(html_dd3f641e77fe7b2aa27d7eb703092001);
+            
+        
+
+        marker_b4bf9de20c76daa32de844d505128cf3.bindPopup(popup_51a72e2a1902f7810b2736b786d2ca24)
+        ;
+
+        
+    
+    
+            marker_b4bf9de20c76daa32de844d505128cf3.bindTooltip(
+                `<div>
+                     대평동 (3,810,420명)
+                 </div>`,
+                {
+  "sticky": true,
+}
+            );
+        
+    
+                marker_b4bf9de20c76daa32de844d505128cf3.setIcon(icon_7b88ae2dd2b4e4f9d6acb5919f0a496e);
+            
+    
+            var circle_248be4dfde25855eeb2927c828788b1c = L.circle(
+                [36.5144, 127.284],
+                {"bubblingMouseEvents": true, "color": "green", "dashArray": null, "dashOffset": null, "fill": true, "fillColor": "green", "fillOpacity": 0.2, "fillRule": "evenodd", "lineCap": "round", "lineJoin": "round", "opacity": 0.5, "radius": 127014.0, "stroke": true, "weight": 3}
+            ).addTo(map_7eded5b890cbe3cfd2de54f01c037379);
+        
+    
+            var marker_5e657d15d6a4934d16cb0d0194996d96 = L.marker(
+                [36.5205, 127.2653],
+                {
+}
+            ).addTo(map_7eded5b890cbe3cfd2de54f01c037379);
+        
+    
+            var icon_4f95234744d0c4eedf2a874a8f30b2bc = L.AwesomeMarkers.icon(
+                {
+  "markerColor": "green",
+  "iconColor": "white",
+  "icon": "check",
+  "prefix": "fa",
+  "extraClasses": "fa-rotate-0",
+}
+            );
+        
+    
+        var popup_4d0311dcf3ac7e6194964d40aabc56ff = L.popup({
+  "maxWidth": 300,
+});
+
+        
+            
+                var html_37220b9846937199c9080296d0dbfb06 = $(`<div id="html_37220b9846937199c9080296d0dbfb06" style="width: 100.0%; height: 100.0%;">         <div style="font-family: Arial, sans-serif; width: 250px;">             <h4 style="color: green; margin-bottom: 10px;">✓ 커버됨</h4>             <table style="width: 100%; font-size: 12px;">                 <tr><td><b>지역:</b></td><td>종촌동</td></tr>                 <tr><td><b>총 이용객:</b></td><td>3,599,774명</td></tr>                 <tr><td><b>최근접 정류장:</b></td><td>어진동</td></tr>                 <tr><td><b>거리:</b></td><td>1.53km</td></tr>             </table>         </div>         </div>`)[0];
+                popup_4d0311dcf3ac7e6194964d40aabc56ff.setContent(html_37220b9846937199c9080296d0dbfb06);
+            
+        
+
+        marker_5e657d15d6a4934d16cb0d0194996d96.bindPopup(popup_4d0311dcf3ac7e6194964d40aabc56ff)
+        ;
+
+        
+    
+    
+            marker_5e657d15d6a4934d16cb0d0194996d96.bindTooltip(
+                `<div>
+                     종촌동 (3,599,774명)
+                 </div>`,
+                {
+  "sticky": true,
+}
+            );
+        
+    
+                marker_5e657d15d6a4934d16cb0d0194996d96.setIcon(icon_4f95234744d0c4eedf2a874a8f30b2bc);
+            
+    
+            var circle_433e1829c8d9529884a65788e183bb7e = L.circle(
+                [36.5205, 127.2653],
+                {"bubblingMouseEvents": true, "color": "green", "dashArray": null, "dashOffset": null, "fill": true, "fillColor": "green", "fillOpacity": 0.2, "fillRule": "evenodd", "lineCap": "round", "lineJoin": "round", "opacity": 0.5, "radius": 119992.46666666666, "stroke": true, "weight": 3}
+            ).addTo(map_7eded5b890cbe3cfd2de54f01c037379);
+        
+    
+            var marker_e953c3b8228d5a87a8041f424a7c3fed = L.marker(
+                [36.4897, 127.2508],
+                {
+}
+            ).addTo(map_7eded5b890cbe3cfd2de54f01c037379);
+        
+    
+            var icon_a78cb9e6e9e0500353765fbfbb1db973 = L.AwesomeMarkers.icon(
+                {
+  "markerColor": "green",
+  "iconColor": "white",
+  "icon": "check",
+  "prefix": "fa",
+  "extraClasses": "fa-rotate-0",
+}
+            );
+        
+    
+        var popup_a44269b57d61a3ab367da9710f5647e5 = L.popup({
+  "maxWidth": 300,
+});
+
+        
+            
+                var html_88b215be3ad9ac6b66841f832033be06 = $(`<div id="html_88b215be3ad9ac6b66841f832033be06" style="width: 100.0%; height: 100.0%;">         <div style="font-family: Arial, sans-serif; width: 250px;">             <h4 style="color: green; margin-bottom: 10px;">✓ 커버됨</h4>             <table style="width: 100%; font-size: 12px;">                 <tr><td><b>지역:</b></td><td>반곡동</td></tr>                 <tr><td><b>총 이용객:</b></td><td>3,572,253명</td></tr>                 <tr><td><b>최근접 정류장:</b></td><td>가람동</td></tr>                 <tr><td><b>거리:</b></td><td>1.64km</td></tr>             </table>         </div>         </div>`)[0];
+                popup_a44269b57d61a3ab367da9710f5647e5.setContent(html_88b215be3ad9ac6b66841f832033be06);
+            
+        
+
+        marker_e953c3b8228d5a87a8041f424a7c3fed.bindPopup(popup_a44269b57d61a3ab367da9710f5647e5)
+        ;
+
+        
+    
+    
+            marker_e953c3b8228d5a87a8041f424a7c3fed.bindTooltip(
+                `<div>
+                     반곡동 (3,572,253명)
+                 </div>`,
+                {
+  "sticky": true,
+}
+            );
+        
+    
+                marker_e953c3b8228d5a87a8041f424a7c3fed.setIcon(icon_a78cb9e6e9e0500353765fbfbb1db973);
+            
+    
+            var circle_a0669fd48b63aad4af24499a8da20369 = L.circle(
+                [36.4897, 127.2508],
+                {"bubblingMouseEvents": true, "color": "green", "dashArray": null, "dashOffset": null, "fill": true, "fillColor": "green", "fillOpacity": 0.2, "fillRule": "evenodd", "lineCap": "round", "lineJoin": "round", "opacity": 0.5, "radius": 119075.1, "stroke": true, "weight": 3}
+            ).addTo(map_7eded5b890cbe3cfd2de54f01c037379);
+        
+    
+            var marker_6bac1031bab12c2ffbec9467f7c87f1e = L.marker(
+                [36.5899, 127.327],
+                {
+}
+            ).addTo(map_7eded5b890cbe3cfd2de54f01c037379);
+        
+    
+            var icon_40ce97a4bf0046d6561ac7b643a0e7d1 = L.AwesomeMarkers.icon(
+                {
+  "markerColor": "red",
+  "iconColor": "white",
+  "icon": "star",
+  "prefix": "fa",
+  "extraClasses": "fa-rotate-0",
+}
+            );
+        
+    
+        var popup_490e59a26e17bd81b92363e805b94056 = L.popup({
+  "maxWidth": 300,
+});
+
+        
+            
+                var html_2ec65f3ce1ad04364fd674d60ef03125 = $(`<div id="html_2ec65f3ce1ad04364fd674d60ef03125" style="width: 100.0%; height: 100.0%;">         <div style="font-family: Arial, sans-serif; width: 250px;">             <h4 style="color: red; margin-bottom: 10px;">⭐ 신규 정류장</h4>             <table style="width: 100%; font-size: 12px;">                 <tr><td><b>지역:</b></td><td>연기면</td></tr>                 <tr><td><b>총 이용객:</b></td><td>3,506,505명</td></tr>                 <tr><td><b>일평균:</b></td><td>9,607명</td></tr>                 <tr><td><b>좌표:</b></td><td>36.5899, 127.3270</td></tr>             </table>         </div>         </div>`)[0];
+                popup_490e59a26e17bd81b92363e805b94056.setContent(html_2ec65f3ce1ad04364fd674d60ef03125);
+            
+        
+
+        marker_6bac1031bab12c2ffbec9467f7c87f1e.bindPopup(popup_490e59a26e17bd81b92363e805b94056)
+        ;
+
+        
+    
+    
+            marker_6bac1031bab12c2ffbec9467f7c87f1e.bindTooltip(
+                `<div>
+                     연기면 (3,506,505명)
+                 </div>`,
+                {
+  "sticky": true,
+}
+            );
+        
+    
+                marker_6bac1031bab12c2ffbec9467f7c87f1e.setIcon(icon_40ce97a4bf0046d6561ac7b643a0e7d1);
+            
+    
+            var circle_be167db5dcf0fa8a425a057f35412c7c = L.circle(
+                [36.5899, 127.327],
+                {"bubblingMouseEvents": true, "color": "red", "dashArray": null, "dashOffset": null, "fill": true, "fillColor": "red", "fillOpacity": 0.2, "fillRule": "evenodd", "lineCap": "round", "lineJoin": "round", "opacity": 0.5, "radius": 116883.5, "stroke": true, "weight": 3}
+            ).addTo(map_7eded5b890cbe3cfd2de54f01c037379);
+        
+    
+            var circle_10ebc9c8a7baa4992be37ab3d9add632 = L.circle(
+                [36.5899, 127.327],
+                {"bubblingMouseEvents": true, "color": "red", "dashArray": "5, 5", "dashOffset": null, "fill": true, "fillColor": "red", "fillOpacity": 0.1, "fillRule": "evenodd", "lineCap": "round", "lineJoin": "round", "opacity": 0.3, "radius": 2000.0, "stroke": true, "weight": 3}
+            ).addTo(map_7eded5b890cbe3cfd2de54f01c037379);
+        
+    
+            var marker_7c910ac625da8ee0af9ebb0828afefd5 = L.marker(
+                [36.515, 127.2619],
+                {
+}
+            ).addTo(map_7eded5b890cbe3cfd2de54f01c037379);
+        
+    
+            var icon_7fd8851f22f257ccea77fb096509c091 = L.AwesomeMarkers.icon(
+                {
+  "markerColor": "green",
+  "iconColor": "white",
+  "icon": "check",
+  "prefix": "fa",
+  "extraClasses": "fa-rotate-0",
+}
+            );
+        
+    
+        var popup_4d0b9a5901b4a439e2aa8032f52ee342 = L.popup({
+  "maxWidth": 300,
+});
+
+        
+            
+                var html_42871c0f2f54369dcdeace27f7949eba = $(`<div id="html_42871c0f2f54369dcdeace27f7949eba" style="width: 100.0%; height: 100.0%;">         <div style="font-family: Arial, sans-serif; width: 250px;">             <h4 style="color: green; margin-bottom: 10px;">✓ 커버됨</h4>             <table style="width: 100%; font-size: 12px;">                 <tr><td><b>지역:</b></td><td>나성동</td></tr>                 <tr><td><b>총 이용객:</b></td><td>3,506,260명</td></tr>                 <tr><td><b>최근접 정류장:</b></td><td>가람동</td></tr>                 <tr><td><b>거리:</b></td><td>1.57km</td></tr>             </table>         </div>         </div>`)[0];
+                popup_4d0b9a5901b4a439e2aa8032f52ee342.setContent(html_42871c0f2f54369dcdeace27f7949eba);
+            
+        
+
+        marker_7c910ac625da8ee0af9ebb0828afefd5.bindPopup(popup_4d0b9a5901b4a439e2aa8032f52ee342)
+        ;
+
+        
+    
+    
+            marker_7c910ac625da8ee0af9ebb0828afefd5.bindTooltip(
+                `<div>
+                     나성동 (3,506,260명)
+                 </div>`,
+                {
+  "sticky": true,
+}
+            );
+        
+    
+                marker_7c910ac625da8ee0af9ebb0828afefd5.setIcon(icon_7fd8851f22f257ccea77fb096509c091);
+            
+    
+            var circle_135069fb7aeb1a0c3ca8940a663bc57a = L.circle(
+                [36.515, 127.2619],
+                {"bubblingMouseEvents": true, "color": "green", "dashArray": null, "dashOffset": null, "fill": true, "fillColor": "green", "fillOpacity": 0.2, "fillRule": "evenodd", "lineCap": "round", "lineJoin": "round", "opacity": 0.5, "radius": 116875.33333333333, "stroke": true, "weight": 3}
+            ).addTo(map_7eded5b890cbe3cfd2de54f01c037379);
+        
+    
+            var marker_1b32ffe06b935612e100f4413ef1ab6a = L.marker(
+                [36.4342, 127.3447],
+                {
+}
+            ).addTo(map_7eded5b890cbe3cfd2de54f01c037379);
+        
+    
+            var icon_ab0737dd531670a518ec9277a030801a = L.AwesomeMarkers.icon(
+                {
+  "markerColor": "red",
+  "iconColor": "white",
+  "icon": "star",
+  "prefix": "fa",
+  "extraClasses": "fa-rotate-0",
+}
+            );
+        
+    
+        var popup_83a8cf1ce203d6e6bfeb49ea256700de = L.popup({
+  "maxWidth": 300,
+});
+
+        
+            
+                var html_5d5b587c867c5460483780714d8df2de = $(`<div id="html_5d5b587c867c5460483780714d8df2de" style="width: 100.0%; height: 100.0%;">         <div style="font-family: Arial, sans-serif; width: 250px;">             <h4 style="color: red; margin-bottom: 10px;">⭐ 신규 정류장</h4>             <table style="width: 100%; font-size: 12px;">                 <tr><td><b>지역:</b></td><td>금남면</td></tr>                 <tr><td><b>총 이용객:</b></td><td>1,508,687명</td></tr>                 <tr><td><b>일평균:</b></td><td>4,133명</td></tr>                 <tr><td><b>좌표:</b></td><td>36.4342, 127.3447</td></tr>             </table>         </div>         </div>`)[0];
+                popup_83a8cf1ce203d6e6bfeb49ea256700de.setContent(html_5d5b587c867c5460483780714d8df2de);
+            
+        
+
+        marker_1b32ffe06b935612e100f4413ef1ab6a.bindPopup(popup_83a8cf1ce203d6e6bfeb49ea256700de)
+        ;
+
+        
+    
+    
+            marker_1b32ffe06b935612e100f4413ef1ab6a.bindTooltip(
+                `<div>
+                     금남면 (1,508,687명)
+                 </div>`,
+                {
+  "sticky": true,
+}
+            );
+        
+    
+                marker_1b32ffe06b935612e100f4413ef1ab6a.setIcon(icon_ab0737dd531670a518ec9277a030801a);
+            
+    
+            var circle_25f6f1a46d03f0877b323cbca603a2db = L.circle(
+                [36.4342, 127.3447],
+                {"bubblingMouseEvents": true, "color": "red", "dashArray": null, "dashOffset": null, "fill": true, "fillColor": "red", "fillOpacity": 0.2, "fillRule": "evenodd", "lineCap": "round", "lineJoin": "round", "opacity": 0.5, "radius": 50289.566666666666, "stroke": true, "weight": 3}
+            ).addTo(map_7eded5b890cbe3cfd2de54f01c037379);
+        
+    
+            var circle_fcca7367a71a189be71c198ffccbea66 = L.circle(
+                [36.4342, 127.3447],
+                {"bubblingMouseEvents": true, "color": "red", "dashArray": "5, 5", "dashOffset": null, "fill": true, "fillColor": "red", "fillOpacity": 0.1, "fillRule": "evenodd", "lineCap": "round", "lineJoin": "round", "opacity": 0.3, "radius": 2000.0, "stroke": true, "weight": 3}
+            ).addTo(map_7eded5b890cbe3cfd2de54f01c037379);
+        
+    
+            var marker_bcc3a2d6f45e1590de3bdb050823ca4c = L.marker(
+                [36.5087, 127.2556],
+                {
+}
+            ).addTo(map_7eded5b890cbe3cfd2de54f01c037379);
+        
+    
+            var icon_098bf6bf421fc97824d565dfb410946d = L.AwesomeMarkers.icon(
+                {
+  "markerColor": "green",
+  "iconColor": "white",
+  "icon": "check",
+  "prefix": "fa",
+  "extraClasses": "fa-rotate-0",
+}
+            );
+        
+    
+        var popup_bc16a4527ac813876bd72f42c660fa28 = L.popup({
+  "maxWidth": 300,
+});
+
+        
+            
+                var html_6f7fc7cd3172a119daf18b8852d63492 = $(`<div id="html_6f7fc7cd3172a119daf18b8852d63492" style="width: 100.0%; height: 100.0%;">         <div style="font-family: Arial, sans-serif; width: 250px;">             <h4 style="color: green; margin-bottom: 10px;">✓ 커버됨</h4>             <table style="width: 100%; font-size: 12px;">                 <tr><td><b>지역:</b></td><td>보람동</td></tr>                 <tr><td><b>총 이용객:</b></td><td>1,159,115명</td></tr>                 <tr><td><b>최근접 정류장:</b></td><td>가람동</td></tr>                 <tr><td><b>거리:</b></td><td>1.08km</td></tr>             </table>         </div>         </div>`)[0];
+                popup_bc16a4527ac813876bd72f42c660fa28.setContent(html_6f7fc7cd3172a119daf18b8852d63492);
+            
+        
+
+        marker_bcc3a2d6f45e1590de3bdb050823ca4c.bindPopup(popup_bc16a4527ac813876bd72f42c660fa28)
+        ;
+
+        
+    
+    
+            marker_bcc3a2d6f45e1590de3bdb050823ca4c.bindTooltip(
+                `<div>
+                     보람동 (1,159,115명)
+                 </div>`,
+                {
+  "sticky": true,
+}
+            );
+        
+    
+                marker_bcc3a2d6f45e1590de3bdb050823ca4c.setIcon(icon_098bf6bf421fc97824d565dfb410946d);
+            
+    
+            var circle_e93007d60d9aa85d9047fec83f3309bc = L.circle(
+                [36.5087, 127.2556],
+                {"bubblingMouseEvents": true, "color": "green", "dashArray": null, "dashOffset": null, "fill": true, "fillColor": "green", "fillOpacity": 0.2, "fillRule": "evenodd", "lineCap": "round", "lineJoin": "round", "opacity": 0.5, "radius": 38637.166666666664, "stroke": true, "weight": 3}
+            ).addTo(map_7eded5b890cbe3cfd2de54f01c037379);
+        
+    
+            var marker_f0f84d6f4a22181e6cd5f6f2d7b08b4d = L.marker(
+                [36.6885, 127.2059],
+                {
+}
+            ).addTo(map_7eded5b890cbe3cfd2de54f01c037379);
+        
+    
+            var icon_04856e30cb9edc7ba4f77ee3c5669dd4 = L.AwesomeMarkers.icon(
+                {
+  "markerColor": "gray",
+  "iconColor": "white",
+  "icon": "info",
+  "prefix": "fa",
+  "extraClasses": "fa-rotate-0",
+}
+            );
+        
+    
+        var popup_5d28de6aa86dcd7f58c65be3f5ad1926 = L.popup({
+  "maxWidth": 300,
+});
+
+        
+            
+                var html_6274d41bdc1859e7af158665c913103b = $(`<div id="html_6274d41bdc1859e7af158665c913103b" style="width: 100.0%; height: 100.0%;">         <div style="font-family: Arial, sans-serif; width: 250px;">             <h4 style="color: gray; margin-bottom: 10px;">⚠ 미커버</h4>             <table style="width: 100%; font-size: 12px;">                 <tr><td><b>지역:</b></td><td>장군면</td></tr>                 <tr><td><b>총 이용객:</b></td><td>1,129,797명</td></tr>                 <tr><td><b>최근접 정류장:</b></td><td>조치원읍</td></tr>                 <tr><td><b>거리:</b></td><td>13.15km</td></tr>             </table>         </div>         </div>`)[0];
+                popup_5d28de6aa86dcd7f58c65be3f5ad1926.setContent(html_6274d41bdc1859e7af158665c913103b);
+            
+        
+
+        marker_f0f84d6f4a22181e6cd5f6f2d7b08b4d.bindPopup(popup_5d28de6aa86dcd7f58c65be3f5ad1926)
+        ;
+
+        
+    
+    
+            marker_f0f84d6f4a22181e6cd5f6f2d7b08b4d.bindTooltip(
+                `<div>
+                     장군면 (1,129,797명)
+                 </div>`,
+                {
+  "sticky": true,
+}
+            );
+        
+    
+                marker_f0f84d6f4a22181e6cd5f6f2d7b08b4d.setIcon(icon_04856e30cb9edc7ba4f77ee3c5669dd4);
+            
+    
+            var circle_4fe52c385e947f424b9b5d76787dd1cf = L.circle(
+                [36.6885, 127.2059],
+                {"bubblingMouseEvents": true, "color": "gray", "dashArray": null, "dashOffset": null, "fill": true, "fillColor": "gray", "fillOpacity": 0.2, "fillRule": "evenodd", "lineCap": "round", "lineJoin": "round", "opacity": 0.5, "radius": 37659.9, "stroke": true, "weight": 3}
+            ).addTo(map_7eded5b890cbe3cfd2de54f01c037379);
+        
+    
+            var marker_0b536b6125804a47899f88f0633876dd = L.marker(
+                [36.4954, 127.2547],
+                {
+}
+            ).addTo(map_7eded5b890cbe3cfd2de54f01c037379);
+        
+    
+            var icon_6528c12e5c96c0ee26c5b92c037f62ef = L.AwesomeMarkers.icon(
+                {
+  "markerColor": "green",
+  "iconColor": "white",
+  "icon": "check",
+  "prefix": "fa",
+  "extraClasses": "fa-rotate-0",
+}
+            );
+        
+    
+        var popup_f30ed64bdedb9474a15e88297c90d76a = L.popup({
+  "maxWidth": 300,
+});
+
+        
+            
+                var html_65df0e9ae36654440649392fed50ab4f = $(`<div id="html_65df0e9ae36654440649392fed50ab4f" style="width: 100.0%; height: 100.0%;">         <div style="font-family: Arial, sans-serif; width: 250px;">             <h4 style="color: green; margin-bottom: 10px;">✓ 커버됨</h4>             <table style="width: 100%; font-size: 12px;">                 <tr><td><b>지역:</b></td><td>다정동</td></tr>                 <tr><td><b>총 이용객:</b></td><td>1,047,323명</td></tr>                 <tr><td><b>최근접 정류장:</b></td><td>가람동</td></tr>                 <tr><td><b>거리:</b></td><td>0.95km</td></tr>             </table>         </div>         </div>`)[0];
+                popup_f30ed64bdedb9474a15e88297c90d76a.setContent(html_65df0e9ae36654440649392fed50ab4f);
+            
+        
+
+        marker_0b536b6125804a47899f88f0633876dd.bindPopup(popup_f30ed64bdedb9474a15e88297c90d76a)
+        ;
+
+        
+    
+    
+            marker_0b536b6125804a47899f88f0633876dd.bindTooltip(
+                `<div>
+                     다정동 (1,047,323명)
+                 </div>`,
+                {
+  "sticky": true,
+}
+            );
+        
+    
+                marker_0b536b6125804a47899f88f0633876dd.setIcon(icon_6528c12e5c96c0ee26c5b92c037f62ef);
+            
+    
+            var circle_cb7dd72aa6314175033c1afa961a74bd = L.circle(
+                [36.4954, 127.2547],
+                {"bubblingMouseEvents": true, "color": "green", "dashArray": null, "dashOffset": null, "fill": true, "fillColor": "green", "fillOpacity": 0.2, "fillRule": "evenodd", "lineCap": "round", "lineJoin": "round", "opacity": 0.5, "radius": 34910.76666666667, "stroke": true, "weight": 3}
+            ).addTo(map_7eded5b890cbe3cfd2de54f01c037379);
+        
+    
+            var marker_c919686c39b27fdfc03f8267b7537db1 = L.marker(
+                [36.5478, 127.3962],
+                {
+}
+            ).addTo(map_7eded5b890cbe3cfd2de54f01c037379);
+        
+    
+            var icon_214e2c66fc0904693547f6e37015e153 = L.AwesomeMarkers.icon(
+                {
+  "markerColor": "gray",
+  "iconColor": "white",
+  "icon": "info",
+  "prefix": "fa",
+  "extraClasses": "fa-rotate-0",
+}
+            );
+        
+    
+        var popup_8a0baa269b2ed605fd2f81c7b2907e90 = L.popup({
+  "maxWidth": 300,
+});
+
+        
+            
+                var html_cfdc0b3b6542ce0d142af0fb7c592dc3 = $(`<div id="html_cfdc0b3b6542ce0d142af0fb7c592dc3" style="width: 100.0%; height: 100.0%;">         <div style="font-family: Arial, sans-serif; width: 250px;">             <h4 style="color: gray; margin-bottom: 10px;">⚠ 미커버</h4>             <table style="width: 100%; font-size: 12px;">                 <tr><td><b>지역:</b></td><td>연서면</td></tr>                 <tr><td><b>총 이용객:</b></td><td>936,253명</td></tr>                 <tr><td><b>최근접 정류장:</b></td><td>연기면</td></tr>                 <tr><td><b>거리:</b></td><td>7.75km</td></tr>             </table>         </div>         </div>`)[0];
+                popup_8a0baa269b2ed605fd2f81c7b2907e90.setContent(html_cfdc0b3b6542ce0d142af0fb7c592dc3);
+            
+        
+
+        marker_c919686c39b27fdfc03f8267b7537db1.bindPopup(popup_8a0baa269b2ed605fd2f81c7b2907e90)
+        ;
+
+        
+    
+    
+            marker_c919686c39b27fdfc03f8267b7537db1.bindTooltip(
+                `<div>
+                     연서면 (936,253명)
+                 </div>`,
+                {
+  "sticky": true,
+}
+            );
+        
+    
+                marker_c919686c39b27fdfc03f8267b7537db1.setIcon(icon_214e2c66fc0904693547f6e37015e153);
+            
+    
+            var circle_c4a19c56d20f42e7d2d408a20f7d82ba = L.circle(
+                [36.5478, 127.3962],
+                {"bubblingMouseEvents": true, "color": "gray", "dashArray": null, "dashOffset": null, "fill": true, "fillColor": "gray", "fillOpacity": 0.2, "fillRule": "evenodd", "lineCap": "round", "lineJoin": "round", "opacity": 0.5, "radius": 31208.433333333334, "stroke": true, "weight": 3}
+            ).addTo(map_7eded5b890cbe3cfd2de54f01c037379);
+        
+    
+            var marker_454b221b2dec4110423b9b8b16bb1143 = L.marker(
+                [36.419, 127.4367],
+                {
+}
+            ).addTo(map_7eded5b890cbe3cfd2de54f01c037379);
+        
+    
+            var icon_967c63925d1eaab1d46c81338318d8c8 = L.AwesomeMarkers.icon(
+                {
+  "markerColor": "gray",
+  "iconColor": "white",
+  "icon": "info",
+  "prefix": "fa",
+  "extraClasses": "fa-rotate-0",
+}
+            );
+        
+    
+        var popup_f9ee8c8e1d62e43fd609b58a7fa25f52 = L.popup({
+  "maxWidth": 300,
+});
+
+        
+            
+                var html_ac3f466a587dd463ff3ae20f4a259ec1 = $(`<div id="html_ac3f466a587dd463ff3ae20f4a259ec1" style="width: 100.0%; height: 100.0%;">         <div style="font-family: Arial, sans-serif; width: 250px;">             <h4 style="color: gray; margin-bottom: 10px;">⚠ 미커버</h4>             <table style="width: 100%; font-size: 12px;">                 <tr><td><b>지역:</b></td><td>부강면</td></tr>                 <tr><td><b>총 이용객:</b></td><td>425,731명</td></tr>                 <tr><td><b>최근접 정류장:</b></td><td>금남면</td></tr>                 <tr><td><b>거리:</b></td><td>8.40km</td></tr>             </table>         </div>         </div>`)[0];
+                popup_f9ee8c8e1d62e43fd609b58a7fa25f52.setContent(html_ac3f466a587dd463ff3ae20f4a259ec1);
+            
+        
+
+        marker_454b221b2dec4110423b9b8b16bb1143.bindPopup(popup_f9ee8c8e1d62e43fd609b58a7fa25f52)
+        ;
+
+        
+    
+    
+            marker_454b221b2dec4110423b9b8b16bb1143.bindTooltip(
+                `<div>
+                     부강면 (425,731명)
+                 </div>`,
+                {
+  "sticky": true,
+}
+            );
+        
+    
+                marker_454b221b2dec4110423b9b8b16bb1143.setIcon(icon_967c63925d1eaab1d46c81338318d8c8);
+            
+    
+            var circle_2d18e4401e4bdec7fb7010b78203d1fd = L.circle(
+                [36.419, 127.4367],
+                {"bubblingMouseEvents": true, "color": "gray", "dashArray": null, "dashOffset": null, "fill": true, "fillColor": "gray", "fillOpacity": 0.2, "fillRule": "evenodd", "lineCap": "round", "lineJoin": "round", "opacity": 0.5, "radius": 14191.033333333333, "stroke": true, "weight": 3}
+            ).addTo(map_7eded5b890cbe3cfd2de54f01c037379);
+        
+    
+            var marker_63f13d5a0ccc698cac7d40f9141eedba = L.marker(
+                [36.6281, 127.1714],
+                {
+}
+            ).addTo(map_7eded5b890cbe3cfd2de54f01c037379);
+        
+    
+            var icon_47cc0bd559f2537792c8a9ffed846d3c = L.AwesomeMarkers.icon(
+                {
+  "markerColor": "gray",
+  "iconColor": "white",
+  "icon": "info",
+  "prefix": "fa",
+  "extraClasses": "fa-rotate-0",
+}
+            );
+        
+    
+        var popup_e7f34f33c0c18e68aa259273a7d36dc5 = L.popup({
+  "maxWidth": 300,
+});
+
+        
+            
+                var html_76093bdd05ea7a46205b35e1b249c453 = $(`<div id="html_76093bdd05ea7a46205b35e1b249c453" style="width: 100.0%; height: 100.0%;">         <div style="font-family: Arial, sans-serif; width: 250px;">             <h4 style="color: gray; margin-bottom: 10px;">⚠ 미커버</h4>             <table style="width: 100%; font-size: 12px;">                 <tr><td><b>지역:</b></td><td>전동면</td></tr>                 <tr><td><b>총 이용객:</b></td><td>425,519명</td></tr>                 <tr><td><b>최근접 정류장:</b></td><td>조치원읍</td></tr>                 <tr><td><b>거리:</b></td><td>11.33km</td></tr>             </table>         </div>         </div>`)[0];
+                popup_e7f34f33c0c18e68aa259273a7d36dc5.setContent(html_76093bdd05ea7a46205b35e1b249c453);
+            
+        
+
+        marker_63f13d5a0ccc698cac7d40f9141eedba.bindPopup(popup_e7f34f33c0c18e68aa259273a7d36dc5)
+        ;
+
+        
+    
+    
+            marker_63f13d5a0ccc698cac7d40f9141eedba.bindTooltip(
+                `<div>
+                     전동면 (425,519명)
+                 </div>`,
+                {
+  "sticky": true,
+}
+            );
+        
+    
+                marker_63f13d5a0ccc698cac7d40f9141eedba.setIcon(icon_47cc0bd559f2537792c8a9ffed846d3c);
+            
+    
+            var circle_53308fe589a80c6bd538f5513021092f = L.circle(
+                [36.6281, 127.1714],
+                {"bubblingMouseEvents": true, "color": "gray", "dashArray": null, "dashOffset": null, "fill": true, "fillColor": "gray", "fillOpacity": 0.2, "fillRule": "evenodd", "lineCap": "round", "lineJoin": "round", "opacity": 0.5, "radius": 14183.966666666667, "stroke": true, "weight": 3}
+            ).addTo(map_7eded5b890cbe3cfd2de54f01c037379);
+        
+    
+            var marker_356f721b2863127957e8238701963fe9 = L.marker(
+                [36.6485, 127.2518],
+                {
+}
+            ).addTo(map_7eded5b890cbe3cfd2de54f01c037379);
+        
+    
+            var icon_5876dde7231b2cf95a4e57cade4f457d = L.AwesomeMarkers.icon(
+                {
+  "markerColor": "gray",
+  "iconColor": "white",
+  "icon": "info",
+  "prefix": "fa",
+  "extraClasses": "fa-rotate-0",
+}
+            );
+        
+    
+        var popup_9d66f40939234cfbfa3b813441cab864 = L.popup({
+  "maxWidth": 300,
+});
+
+        
+            
+                var html_f6679f6a83bc0c9a2755ede970b4a4e8 = $(`<div id="html_f6679f6a83bc0c9a2755ede970b4a4e8" style="width: 100.0%; height: 100.0%;">         <div style="font-family: Arial, sans-serif; width: 250px;">             <h4 style="color: gray; margin-bottom: 10px;">⚠ 미커버</h4>             <table style="width: 100%; font-size: 12px;">                 <tr><td><b>지역:</b></td><td>연동면</td></tr>                 <tr><td><b>총 이용객:</b></td><td>245,202명</td></tr>                 <tr><td><b>최근접 정류장:</b></td><td>조치원읍</td></tr>                 <tr><td><b>거리:</b></td><td>7.21km</td></tr>             </table>         </div>         </div>`)[0];
+                popup_9d66f40939234cfbfa3b813441cab864.setContent(html_f6679f6a83bc0c9a2755ede970b4a4e8);
+            
+        
+
+        marker_356f721b2863127957e8238701963fe9.bindPopup(popup_9d66f40939234cfbfa3b813441cab864)
+        ;
+
+        
+    
+    
+            marker_356f721b2863127957e8238701963fe9.bindTooltip(
+                `<div>
+                     연동면 (245,202명)
+                 </div>`,
+                {
+  "sticky": true,
+}
+            );
+        
+    
+                marker_356f721b2863127957e8238701963fe9.setIcon(icon_5876dde7231b2cf95a4e57cade4f457d);
+            
+    
+            var circle_ebb034d2114fdd72f693e460cc6cfaff = L.circle(
+                [36.6485, 127.2518],
+                {"bubblingMouseEvents": true, "color": "gray", "dashArray": null, "dashOffset": null, "fill": true, "fillColor": "gray", "fillOpacity": 0.2, "fillRule": "evenodd", "lineCap": "round", "lineJoin": "round", "opacity": 0.5, "radius": 8173.4, "stroke": true, "weight": 3}
+            ).addTo(map_7eded5b890cbe3cfd2de54f01c037379);
+        
+    
+            var marker_4f427c899b315b922e6348d21efafe87 = L.marker(
+                [36.6048, 127.3273],
+                {
+}
+            ).addTo(map_7eded5b890cbe3cfd2de54f01c037379);
+        
+    
+            var icon_206fc3d255137b38911fb06880851abe = L.AwesomeMarkers.icon(
+                {
+  "markerColor": "green",
+  "iconColor": "white",
+  "icon": "check",
+  "prefix": "fa",
+  "extraClasses": "fa-rotate-0",
+}
+            );
+        
+    
+        var popup_891614e1bb8eff61bda4859a2af6ba81 = L.popup({
+  "maxWidth": 300,
+});
+
+        
+            
+                var html_a3bd09dd477c0636e9960d381b64df07 = $(`<div id="html_a3bd09dd477c0636e9960d381b64df07" style="width: 100.0%; height: 100.0%;">         <div style="font-family: Arial, sans-serif; width: 250px;">             <h4 style="color: green; margin-bottom: 10px;">✓ 커버됨</h4>             <table style="width: 100%; font-size: 12px;">                 <tr><td><b>지역:</b></td><td>소정면</td></tr>                 <tr><td><b>총 이용객:</b></td><td>113,614명</td></tr>                 <tr><td><b>최근접 정류장:</b></td><td>연기면</td></tr>                 <tr><td><b>거리:</b></td><td>1.66km</td></tr>             </table>         </div>         </div>`)[0];
+                popup_891614e1bb8eff61bda4859a2af6ba81.setContent(html_a3bd09dd477c0636e9960d381b64df07);
+            
+        
+
+        marker_4f427c899b315b922e6348d21efafe87.bindPopup(popup_891614e1bb8eff61bda4859a2af6ba81)
+        ;
+
+        
+    
+    
+            marker_4f427c899b315b922e6348d21efafe87.bindTooltip(
+                `<div>
+                     소정면 (113,614명)
+                 </div>`,
+                {
+  "sticky": true,
+}
+            );
+        
+    
+                marker_4f427c899b315b922e6348d21efafe87.setIcon(icon_206fc3d255137b38911fb06880851abe);
+            
+    
+            var circle_9768c37660e75650c85d8f973b2e90c5 = L.circle(
+                [36.6048, 127.3273],
+                {"bubblingMouseEvents": true, "color": "green", "dashArray": null, "dashOffset": null, "fill": true, "fillColor": "green", "fillOpacity": 0.2, "fillRule": "evenodd", "lineCap": "round", "lineJoin": "round", "opacity": 0.5, "radius": 3787.133333333333, "stroke": true, "weight": 3}
+            ).addTo(map_7eded5b890cbe3cfd2de54f01c037379);
+        
+    
+            var marker_93a79f4122cdb8f371a04c9c2b4d3b66 = L.marker(
+                [36.5009, 127.2628],
+                {
+}
+            ).addTo(map_7eded5b890cbe3cfd2de54f01c037379);
+        
+    
+            var icon_47f26d171df5e22d8b74006aefe1492f = L.AwesomeMarkers.icon(
+                {
+  "markerColor": "red",
+  "iconColor": "white",
+  "icon": "star",
+  "prefix": "fa",
+  "extraClasses": "fa-rotate-0",
+}
+            );
+        
+    
+        var popup_1b86369a72da34b74ed19d9709903c6c = L.popup({
+  "maxWidth": 300,
+});
+
+        
+            
+                var html_bb72a5de564b47906fbd7db3491d22dc = $(`<div id="html_bb72a5de564b47906fbd7db3491d22dc" style="width: 100.0%; height: 100.0%;">         <div style="font-family: Arial, sans-serif; width: 250px;">             <h4 style="color: red; margin-bottom: 10px;">⭐ 신규 정류장</h4>             <table style="width: 100%; font-size: 12px;">                 <tr><td><b>지역:</b></td><td>가람동</td></tr>                 <tr><td><b>총 이용객:</b></td><td>106,313명</td></tr>                 <tr><td><b>일평균:</b></td><td>291명</td></tr>                 <tr><td><b>좌표:</b></td><td>36.5009, 127.2628</td></tr>             </table>         </div>         </div>`)[0];
+                popup_1b86369a72da34b74ed19d9709903c6c.setContent(html_bb72a5de564b47906fbd7db3491d22dc);
+            
+        
+
+        marker_93a79f4122cdb8f371a04c9c2b4d3b66.bindPopup(popup_1b86369a72da34b74ed19d9709903c6c)
+        ;
+
+        
+    
+    
+            marker_93a79f4122cdb8f371a04c9c2b4d3b66.bindTooltip(
+                `<div>
+                     가람동 (106,313명)
+                 </div>`,
+                {
+  "sticky": true,
+}
+            );
+        
+    
+                marker_93a79f4122cdb8f371a04c9c2b4d3b66.setIcon(icon_47f26d171df5e22d8b74006aefe1492f);
+            
+    
+            var circle_94dc074c92f628f4aacc9d6300ef7d01 = L.circle(
+                [36.5009, 127.2628],
+                {"bubblingMouseEvents": true, "color": "red", "dashArray": null, "dashOffset": null, "fill": true, "fillColor": "red", "fillOpacity": 0.2, "fillRule": "evenodd", "lineCap": "round", "lineJoin": "round", "opacity": 0.5, "radius": 3543.766666666667, "stroke": true, "weight": 3}
+            ).addTo(map_7eded5b890cbe3cfd2de54f01c037379);
+        
+    
+            var circle_f435acc10a7abafa101c9a8ac44174e1 = L.circle(
+                [36.5009, 127.2628],
+                {"bubblingMouseEvents": true, "color": "red", "dashArray": "5, 5", "dashOffset": null, "fill": true, "fillColor": "red", "fillOpacity": 0.1, "fillRule": "evenodd", "lineCap": "round", "lineJoin": "round", "opacity": 0.3, "radius": 2000.0, "stroke": true, "weight": 3}
+            ).addTo(map_7eded5b890cbe3cfd2de54f01c037379);
+        
+</script>
+</html>
