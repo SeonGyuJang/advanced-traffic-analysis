@@ -1,0 +1,130 @@
+
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <title>세종시 버스 정류장 최적화 분석 리포트</title>
+    <style>
+        body {font-family: 'Malgun Gothic', sans-serif; margin: 20px; background: #f5f5f5;}
+        .container {max-width: 1200px; margin: 0 auto; background: white; padding: 30px; border-radius: 10px;}
+        h1 {color: #2c3e50; border-bottom: 3px solid #3498db; padding-bottom: 10px;}
+        h2 {color: #34495e; margin-top: 30px; border-left: 5px solid #3498db; padding-left: 15px;}
+        .metric {display: inline-block; background: linear-gradient(135deg, #667eea, #764ba2);
+                 color: white; padding: 20px; margin: 10px; border-radius: 8px; min-width: 150px;}
+        .metric-value {font-size: 36px; font-weight: bold;}
+        .metric-label {font-size: 14px; opacity: 0.9;}
+        table {width: 100%; border-collapse: collapse; margin: 20px 0;}
+        th, td {padding: 12px; text-align: left; border-bottom: 1px solid #ddd;}
+        th {background: #3498db; color: white;}
+        tr:hover {background: #f5f5f5;}
+        .highlight {background: #ffffcc; font-weight: bold;}
+        img {max-width: 100%; border-radius: 8px; margin: 20px 0; box-shadow: 0 4px 6px rgba(0,0,0,0.1);}
+        .success {background: #d4edda; border-left: 5px solid #28a745; padding: 15px; margin: 20px 0;}
+        .info {background: #d1ecf1; border-left: 5px solid #17a2b8; padding: 15px; margin: 20px 0;}
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🚌 세종시 버스 정류장 최적화 분석 리포트</h1>
+        <p><strong>분석 일시:</strong> 2025년 12월 02일 07:10</p>
+        <p><strong>분석 방법:</strong> GPS 기반 정밀 분석 + 정수계획법 최적화</p>
+
+        <h2>📊 핵심 지표</h2>
+        <div>
+            <div class="metric">
+                <div class="metric-label">분석 지역</div>
+                <div class="metric-value">23</div>
+            </div>
+            <div class="metric">
+                <div class="metric-label">총 이용객</div>
+                <div class="metric-value">70.2M</div>
+            </div>
+            <div class="metric">
+                <div class="metric-label">신규 정류장</div>
+                <div class="metric-value">5</div>
+            </div>
+            <div class="metric">
+                <div class="metric-label">커버리지</div>
+                <div class="metric-value">98.9%</div>
+            </div>
+        </div>
+
+        <h2>🎯 최적화 결과</h2>
+        <div class="success">
+            <h3>선정된 신규 정류장 위치</h3>
+            <table>
+                <tr><th>순위</th><th>행정구역</th><th>이용객</th><th>건물수</th><th>GPS 좌표</th></tr>
+
+                <tr class="highlight">
+                    <td>1</td>
+                    <td>조치원읍</td>
+                    <td>11,330,610명</td>
+                    <td>8,512개</td>
+                    <td>(36.6023, 127.2939)</td>
+                </tr>
+
+                <tr class="highlight">
+                    <td>2</td>
+                    <td>나성동</td>
+                    <td>3,506,260명</td>
+                    <td>196개</td>
+                    <td>(36.5036, 127.2476)</td>
+                </tr>
+
+                <tr class="highlight">
+                    <td>3</td>
+                    <td>금남면</td>
+                    <td>1,508,687명</td>
+                    <td>6,532개</td>
+                    <td>(36.4547, 127.2923)</td>
+                </tr>
+
+                <tr class="highlight">
+                    <td>4</td>
+                    <td>전의면</td>
+                    <td>660,406명</td>
+                    <td>5,217개</td>
+                    <td>(36.6693, 127.1960)</td>
+                </tr>
+
+                <tr class="highlight">
+                    <td>5</td>
+                    <td>전동면</td>
+                    <td>425,519명</td>
+                    <td>4,932개</td>
+                    <td>(36.6515, 127.2529)</td>
+                </tr>
+
+            </table>
+        </div>
+
+        <h2>📈 분석 결과</h2>
+        <img src="01_탐색적_분석.png" alt="탐색적 분석">
+        <img src="02_시나리오_분석.png" alt="시나리오 분석">
+
+        <h2>🗺️ 인터랙티브 지도</h2>
+        <p><a href="03_인터랙티브_지도.html" target="_blank" style="color: #3498db; font-size: 18px; font-weight: bold;">📍 지도 보기 (클릭)</a></p>
+
+        <h2>💡 결론 및 권장사항</h2>
+        <div class="info">
+            <h3>주요 발견사항</h3>
+            <ul>
+                <li><strong>5개 정류장</strong>으로 <strong>98.9%</strong> 수요 커버 가능</li>
+                <li>실제 GPS 거리 기반 정밀 분석 수행</li>
+                <li>수요, 건물밀도, 환승 패턴을 종합 고려한 최적화</li>
+            </ul>
+            <h3>권장사항</h3>
+            <ol>
+                <li>상위 3개 지역부터 우선 설치 권장</li>
+                <li>기존 정류장과의 중복 확인 필요</li>
+                <li>도로 접근성 및 토지 이용 가능성 현장 조사 필요</li>
+            </ol>
+        </div>
+
+        <hr style="margin: 40px 0;">
+        <p style="text-align: center; color: #7f8c8d;">
+            <small>본 분석은 2023년 데이터 기반으로 수행되었습니다.</small>
+        </p>
+    </div>
+</body>
+</html>
