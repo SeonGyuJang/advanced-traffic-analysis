@@ -1,0 +1,1055 @@
+
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>세종시 버스 노선 최적화 대시보드</title>
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.7.1/dist/leaflet.css" />
+    <script src="https://unpkg.com/leaflet@1.7.1/dist/leaflet.js"></script>
+    <script src="https://cdn.plot.ly/plotly-latest.min.js"></script>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 1600px;
+            margin: 0 auto;
+        }
+
+        .header {
+            background: white;
+            padding: 30px;
+            border-radius: 15px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+            margin-bottom: 30px;
+            text-align: center;
+        }
+
+        .header h1 {
+            color: #2E4057;
+            font-size: 2.5em;
+            margin-bottom: 10px;
+        }
+
+        .header p {
+            color: #666;
+            font-size: 1.1em;
+        }
+
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 20px;
+            margin-bottom: 30px;
+        }
+
+        .stat-card {
+            background: white;
+            padding: 25px;
+            border-radius: 15px;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+            text-align: center;
+            transition: transform 0.3s ease;
+        }
+
+        .stat-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 25px rgba(0,0,0,0.15);
+        }
+
+        .stat-card .number {
+            font-size: 2.5em;
+            font-weight: bold;
+            margin: 10px 0;
+        }
+
+        .stat-card .label {
+            color: #666;
+            font-size: 1.1em;
+        }
+
+        .stat-card.excellent { border-top: 4px solid #06A77D; }
+        .stat-card.excellent .number { color: #06A77D; }
+
+        .stat-card.warning { border-top: 4px solid #F4B41A; }
+        .stat-card.warning .number { color: #F4B41A; }
+
+        .stat-card.danger { border-top: 4px solid #D64933; }
+        .stat-card.danger .number { color: #D64933; }
+
+        .stat-card.info { border-top: 4px solid #5C7CFA; }
+        .stat-card.info .number { color: #5C7CFA; }
+
+        .section {
+            background: white;
+            padding: 30px;
+            border-radius: 15px;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+            margin-bottom: 30px;
+        }
+
+        .section h2 {
+            color: #2E4057;
+            margin-bottom: 20px;
+            padding-bottom: 10px;
+            border-bottom: 3px solid #667eea;
+        }
+
+        #map {
+            height: 600px;
+            border-radius: 10px;
+            margin-bottom: 20px;
+        }
+
+        .chart-container {
+            margin: 20px 0;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 20px 0;
+        }
+
+        table thead {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+        }
+
+        table th, table td {
+            padding: 12px;
+            text-align: left;
+            border-bottom: 1px solid #ddd;
+        }
+
+        table tbody tr:hover {
+            background-color: #f5f5f5;
+        }
+
+        .badge {
+            padding: 5px 10px;
+            border-radius: 20px;
+            font-size: 0.9em;
+            font-weight: bold;
+            display: inline-block;
+        }
+
+        .badge.excellent { background: #06A77D; color: white; }
+        .badge.good { background: #48C774; color: white; }
+        .badge.fair { background: #F4B41A; color: white; }
+        .badge.poor { background: #FF9800; color: white; }
+        .badge.critical { background: #D64933; color: white; }
+
+        .tabs {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 20px;
+            border-bottom: 2px solid #ddd;
+        }
+
+        .tab {
+            padding: 12px 24px;
+            cursor: pointer;
+            border: none;
+            background: none;
+            font-size: 1.1em;
+            color: #666;
+            border-bottom: 3px solid transparent;
+            transition: all 0.3s ease;
+        }
+
+        .tab:hover {
+            color: #667eea;
+        }
+
+        .tab.active {
+            color: #667eea;
+            border-bottom-color: #667eea;
+            font-weight: bold;
+        }
+
+        .tab-content {
+            display: none;
+        }
+
+        .tab-content.active {
+            display: block;
+        }
+
+        .recommendation-item {
+            background: #f8f9fa;
+            padding: 15px;
+            margin: 10px 0;
+            border-left: 4px solid #667eea;
+            border-radius: 5px;
+        }
+
+        .recommendation-item.priority-1 { border-left-color: #D64933; }
+        .recommendation-item.priority-2 { border-left-color: #F4B41A; }
+        .recommendation-item.priority-3 { border-left-color: #5C7CFA; }
+        .recommendation-item.priority-4 { border-left-color: #06A77D; }
+
+        .recommendation-item h4 {
+            color: #2E4057;
+            margin-bottom: 8px;
+        }
+
+        .recommendation-item p {
+            color: #666;
+            margin: 5px 0;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>🚍 세종시 버스 노선 최적화 종합 대시보드</h1>
+            <p>분석일자: 2025-12-03 08:36:39</p>
+        </div>
+
+        <!-- 핵심 통계 카드 -->
+        <div class="stats-grid">
+            <div class="stat-card info">
+                <div class="label">총 노선 수</div>
+                <div class="number">46</div>
+                <div class="label">개 노선</div>
+            </div>
+            <div class="stat-card excellent">
+                <div class="label">고효율 노선</div>
+                <div class="number">17</div>
+                <div class="label">높음/매우높음</div>
+            </div>
+            <div class="stat-card danger">
+                <div class="label">서비스 부족 지역</div>
+                <div class="number">9</div>
+                <div class="label">미커버/부족</div>
+            </div>
+            <div class="stat-card warning">
+                <div class="label">개선 필요 노선</div>
+                <div class="number">9</div>
+                <div class="label">저효율 노선</div>
+            </div>
+            <div class="stat-card info">
+                <div class="label">최적화 제안</div>
+                <div class="number">16</div>
+                <div class="label">건</div>
+            </div>
+        </div>
+
+        <!-- 탭 네비게이션 -->
+        <div class="section">
+            <div class="tabs">
+                <button class="tab active" onclick="showTab('overview')">📊 종합 개요</button>
+                <button class="tab" onclick="showTab('routes')">🚌 노선 분석</button>
+                <button class="tab" onclick="showTab('regions')">🗺️ 지역 분석</button>
+                <button class="tab" onclick="showTab('recommendations')">💡 최적화 제안</button>
+                <button class="tab" onclick="showTab('overlap')">🔄 노선 중복</button>
+            </div>
+
+            <!-- 종합 개요 탭 -->
+            <div id="overview" class="tab-content active">
+                <h2>📊 종합 개요</h2>
+
+                <div class="chart-container">
+                    <div id="efficiency-chart"></div>
+                </div>
+
+                <div class="chart-container">
+                    <div id="service-level-chart"></div>
+                </div>
+
+                <div class="chart-container">
+                    <div id="demand-chart"></div>
+                </div>
+            </div>
+
+            <!-- 노선 분석 탭 -->
+            <div id="routes" class="tab-content">
+                <h2>🚌 노선별 상세 분석</h2>
+
+                <table id="routes-table">
+                    <thead>
+                        <tr>
+                            <th>노선번호</th>
+                            <th>정류장 수</th>
+                            <th>노선 길이(km)</th>
+                            <th>커버 지역</th>
+                            <th>총 커버 수요</th>
+                            <th>수요밀도(/km)</th>
+                            <th>효율성</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+
+                        <tr>
+                            <td><strong>53</strong></td>
+                            <td>38</td>
+                            <td>18.03</td>
+                            <td>4</td>
+                            <td>22,043,586</td>
+                            <td>1,222,776</td>
+                            <td><span class="badge excellent">매우높음</span></td>
+                        </tr>
+
+                        <tr>
+                            <td><strong>52</strong></td>
+                            <td>39</td>
+                            <td>18.15</td>
+                            <td>4</td>
+                            <td>22,043,586</td>
+                            <td>1,214,338</td>
+                            <td><span class="badge excellent">매우높음</span></td>
+                        </tr>
+
+                        <tr>
+                            <td><strong>12</strong></td>
+                            <td>30</td>
+                            <td>10.07</td>
+                            <td>1</td>
+                            <td>11,330,610</td>
+                            <td>1,124,975</td>
+                            <td><span class="badge excellent">매우높음</span></td>
+                        </tr>
+
+                        <tr>
+                            <td><strong>11</strong></td>
+                            <td>30</td>
+                            <td>10.25</td>
+                            <td>1</td>
+                            <td>11,330,610</td>
+                            <td>1,105,890</td>
+                            <td><span class="badge excellent">매우높음</span></td>
+                        </tr>
+
+                        <tr>
+                            <td><strong>13</strong></td>
+                            <td>28</td>
+                            <td>10.25</td>
+                            <td>1</td>
+                            <td>11,330,610</td>
+                            <td>1,105,217</td>
+                            <td><span class="badge excellent">매우높음</span></td>
+                        </tr>
+
+                        <tr>
+                            <td><strong>74</strong></td>
+                            <td>29</td>
+                            <td>11.87</td>
+                            <td>1</td>
+                            <td>11,330,610</td>
+                            <td>954,428</td>
+                            <td><span class="badge excellent">매우높음</span></td>
+                        </tr>
+
+                        <tr>
+                            <td><strong>76</strong></td>
+                            <td>38</td>
+                            <td>15.95</td>
+                            <td>1</td>
+                            <td>11,330,610</td>
+                            <td>710,434</td>
+                            <td><span class="badge excellent">매우높음</span></td>
+                        </tr>
+
+                        <tr>
+                            <td><strong>73</strong></td>
+                            <td>54</td>
+                            <td>21.19</td>
+                            <td>2</td>
+                            <td>12,266,863</td>
+                            <td>578,791</td>
+                            <td><span class="badge excellent">매우높음</span></td>
+                        </tr>
+
+                        <tr>
+                            <td><strong>B5</strong></td>
+                            <td>58</td>
+                            <td>128.89</td>
+                            <td>8</td>
+                            <td>35,663,705</td>
+                            <td>276,690</td>
+                            <td><span class="badge excellent">매우높음</span></td>
+                        </tr>
+
+                        <tr>
+                            <td><strong>203</strong></td>
+                            <td>61</td>
+                            <td>64.79</td>
+                            <td>2</td>
+                            <td>11,778,062</td>
+                            <td>181,777</td>
+                            <td><span class="badge good">높음</span></td>
+                        </tr>
+
+                        <tr>
+                            <td><strong>1005</strong></td>
+                            <td>38</td>
+                            <td>103.91</td>
+                            <td>4</td>
+                            <td>14,486,417</td>
+                            <td>139,418</td>
+                            <td><span class="badge good">높음</span></td>
+                        </tr>
+
+                        <tr>
+                            <td><strong>B0</strong></td>
+                            <td>90</td>
+                            <td>221.15</td>
+                            <td>5</td>
+                            <td>27,299,702</td>
+                            <td>123,444</td>
+                            <td><span class="badge good">높음</span></td>
+                        </tr>
+
+                        <tr>
+                            <td><strong>1004</strong></td>
+                            <td>75</td>
+                            <td>161.84</td>
+                            <td>6</td>
+                            <td>19,040,000</td>
+                            <td>117,649</td>
+                            <td><span class="badge good">높음</span></td>
+                        </tr>
+
+                        <tr>
+                            <td><strong>72</strong></td>
+                            <td>118</td>
+                            <td>104.64</td>
+                            <td>2</td>
+                            <td>12,266,863</td>
+                            <td>117,225</td>
+                            <td><span class="badge good">높음</span></td>
+                        </tr>
+
+                        <tr>
+                            <td><strong>66</strong></td>
+                            <td>41</td>
+                            <td>79.89</td>
+                            <td>3</td>
+                            <td>8,758,193</td>
+                            <td>109,634</td>
+                            <td><span class="badge good">높음</span></td>
+                        </tr>
+
+                        <tr>
+                            <td><strong>201</strong></td>
+                            <td>50</td>
+                            <td>43.10</td>
+                            <td>3</td>
+                            <td>4,659,896</td>
+                            <td>108,114</td>
+                            <td><span class="badge good">높음</span></td>
+                        </tr>
+
+                        <tr>
+                            <td><strong>17</strong></td>
+                            <td>46</td>
+                            <td>109.73</td>
+                            <td>1</td>
+                            <td>11,330,610</td>
+                            <td>103,261</td>
+                            <td><span class="badge good">높음</span></td>
+                        </tr>
+
+                        <tr>
+                            <td><strong>67</strong></td>
+                            <td>38</td>
+                            <td>87.96</td>
+                            <td>3</td>
+                            <td>8,758,193</td>
+                            <td>99,566</td>
+                            <td><span class="badge fair">보통</span></td>
+                        </tr>
+
+                        <tr>
+                            <td><strong>94</strong></td>
+                            <td>54</td>
+                            <td>116.05</td>
+                            <td>1</td>
+                            <td>11,330,610</td>
+                            <td>97,638</td>
+                            <td><span class="badge fair">보통</span></td>
+                        </tr>
+
+                        <tr>
+                            <td><strong>93</strong></td>
+                            <td>53</td>
+                            <td>117.02</td>
+                            <td>1</td>
+                            <td>11,330,610</td>
+                            <td>96,825</td>
+                            <td><span class="badge fair">보통</span></td>
+                        </tr>
+
+                    </tbody>
+                </table>
+            </div>
+
+            <!-- 지역 분석 탭 -->
+            <div id="regions" class="tab-content">
+                <h2>🗺️ 지역별 서비스 수준</h2>
+
+                <table id="regions-table">
+                    <thead>
+                        <tr>
+                            <th>행정구역</th>
+                            <th>총 수요</th>
+                            <th>노선 수</th>
+                            <th>노선 목록</th>
+                            <th>수요/노선</th>
+                            <th>서비스 수준</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+
+                        <tr>
+                            <td><strong>조치원읍</strong></td>
+                            <td>11,330,610</td>
+                            <td>20</td>
+                            <td>11, 12, 13, 16, 17, 300, 31, 71, 72, 73, 74, 75, 76, 86, 91, 910, 92, 93, 94, 95</td>
+                            <td>566,530</td>
+                            <td><span class="badge good">과잉</span></td>
+                        </tr>
+
+                        <tr>
+                            <td><strong>도담동</strong></td>
+                            <td>9,410,569</td>
+                            <td>5</td>
+                            <td>1004, 1005, 52, 53, 61</td>
+                            <td>1,882,113</td>
+                            <td><span class="badge excellent">적정</span></td>
+                        </tr>
+
+                        <tr>
+                            <td><strong>어진동</strong></td>
+                            <td>7,967,642</td>
+                            <td>6</td>
+                            <td>203, 52, 53, B0, B2, B5</td>
+                            <td>1,327,940</td>
+                            <td><span class="badge good">과잉</span></td>
+                        </tr>
+
+                        <tr>
+                            <td><strong>한솔동</strong></td>
+                            <td>6,267,806</td>
+                            <td>2</td>
+                            <td>B0, B5</td>
+                            <td>3,133,903</td>
+                            <td><span class="badge poor">부족</span></td>
+                        </tr>
+
+                        <tr>
+                            <td><strong>아름동</strong></td>
+                            <td>5,157,311</td>
+                            <td>8</td>
+                            <td>221, 66, 661, 67, 69, 691, B0, B5</td>
+                            <td>644,663</td>
+                            <td><span class="badge good">과잉</span></td>
+                        </tr>
+
+                        <tr>
+                            <td><strong>고운동</strong></td>
+                            <td>4,307,169</td>
+                            <td>3</td>
+                            <td>221, B0, B5</td>
+                            <td>1,435,723</td>
+                            <td><span class="badge excellent">적정</span></td>
+                        </tr>
+
+                        <tr>
+                            <td><strong>대평동</strong></td>
+                            <td>3,810,420</td>
+                            <td>4</td>
+                            <td>1004, 1005, 203, B5</td>
+                            <td>952,605</td>
+                            <td><span class="badge excellent">적정</span></td>
+                        </tr>
+
+                        <tr>
+                            <td><strong>종촌동</strong></td>
+                            <td>3,599,774</td>
+                            <td>11</td>
+                            <td>221, 62, 64, 66, 661, 67, 69, 691, B0, B2, B5</td>
+                            <td>327,252</td>
+                            <td><span class="badge good">과잉</span></td>
+                        </tr>
+
+                        <tr>
+                            <td><strong>반곡동</strong></td>
+                            <td>3,572,253</td>
+                            <td>0</td>
+                            <td>없음</td>
+                            <td>3,572,253</td>
+                            <td><span class="badge critical">미커버</span></td>
+                        </tr>
+
+                        <tr>
+                            <td><strong>연기면</strong></td>
+                            <td>3,506,505</td>
+                            <td>1</td>
+                            <td>16</td>
+                            <td>3,506,505</td>
+                            <td><span class="badge poor">부족</span></td>
+                        </tr>
+
+                        <tr>
+                            <td><strong>나성동</strong></td>
+                            <td>3,506,260</td>
+                            <td>6</td>
+                            <td>1004, 201, 221, 52, 53, B5</td>
+                            <td>584,376</td>
+                            <td><span class="badge good">과잉</span></td>
+                        </tr>
+
+                        <tr>
+                            <td><strong>금남면</strong></td>
+                            <td>1,508,687</td>
+                            <td>0</td>
+                            <td>없음</td>
+                            <td>1,508,687</td>
+                            <td><span class="badge critical">미커버</span></td>
+                        </tr>
+
+                        <tr>
+                            <td><strong>보람동</strong></td>
+                            <td>1,159,115</td>
+                            <td>4</td>
+                            <td>1004, 1005, 52, 53</td>
+                            <td>289,778</td>
+                            <td><span class="badge excellent">적정</span></td>
+                        </tr>
+
+                        <tr>
+                            <td><strong>장군면</strong></td>
+                            <td>1,129,797</td>
+                            <td>0</td>
+                            <td>없음</td>
+                            <td>1,129,797</td>
+                            <td><span class="badge critical">미커버</span></td>
+                        </tr>
+
+                        <tr>
+                            <td><strong>다정동</strong></td>
+                            <td>1,047,323</td>
+                            <td>3</td>
+                            <td>1004, 201, B5</td>
+                            <td>349,107</td>
+                            <td><span class="badge excellent">적정</span></td>
+                        </tr>
+
+                        <tr>
+                            <td><strong>연서면</strong></td>
+                            <td>936,253</td>
+                            <td>3</td>
+                            <td>72, 73, 86</td>
+                            <td>312,084</td>
+                            <td><span class="badge excellent">적정</span></td>
+                        </tr>
+
+                        <tr>
+                            <td><strong>전의면</strong></td>
+                            <td>660,406</td>
+                            <td>2</td>
+                            <td>82, 86</td>
+                            <td>330,203</td>
+                            <td><span class="badge poor">부족</span></td>
+                        </tr>
+
+                        <tr>
+                            <td><strong>부강면</strong></td>
+                            <td>425,731</td>
+                            <td>1</td>
+                            <td>300</td>
+                            <td>425,731</td>
+                            <td><span class="badge poor">부족</span></td>
+                        </tr>
+
+                        <tr>
+                            <td><strong>전동면</strong></td>
+                            <td>425,519</td>
+                            <td>0</td>
+                            <td>없음</td>
+                            <td>425,519</td>
+                            <td><span class="badge critical">미커버</span></td>
+                        </tr>
+
+                        <tr>
+                            <td><strong>연동면</strong></td>
+                            <td>245,202</td>
+                            <td>3</td>
+                            <td>300, 32, 33</td>
+                            <td>81,734</td>
+                            <td><span class="badge excellent">적정</span></td>
+                        </tr>
+
+                        <tr>
+                            <td><strong>소정면</strong></td>
+                            <td>113,614</td>
+                            <td>0</td>
+                            <td>없음</td>
+                            <td>113,614</td>
+                            <td><span class="badge critical">미커버</span></td>
+                        </tr>
+
+                        <tr>
+                            <td><strong>가람동</strong></td>
+                            <td>106,313</td>
+                            <td>4</td>
+                            <td>1004, 1005, 201, 221</td>
+                            <td>26,578</td>
+                            <td><span class="badge excellent">적정</span></td>
+                        </tr>
+
+                        <tr>
+                            <td><strong>반포면</strong></td>
+                            <td>1,108</td>
+                            <td>5</td>
+                            <td>66, 661, 67, 69, 691</td>
+                            <td>221</td>
+                            <td><span class="badge excellent">적정</span></td>
+                        </tr>
+
+                    </tbody>
+                </table>
+            </div>
+
+            <!-- 최적화 제안 탭 -->
+            <div id="recommendations" class="tab-content">
+                <h2>💡 노선 최적화 제안</h2>
+
+                <div class="recommendation-item priority-1">
+                    <h4>📍 한솔동 - 노선추가</h4>
+                    <p><strong>현재 상태:</strong> 노선 2개, 수요 6,267,806</p>
+                    <p><strong>제안 사항:</strong> 한솔동에 추가 노선 배치 필요 (고수요 지역)</p>
+                    <p><strong>예상 효과:</strong> 미커버 지역 해소, 주민 접근성 향상</p>
+                </div>
+
+                <div class="recommendation-item priority-1">
+                    <h4>📍 반곡동 - 노선추가</h4>
+                    <p><strong>현재 상태:</strong> 노선 0개, 수요 3,572,253</p>
+                    <p><strong>제안 사항:</strong> 반곡동에 추가 노선 배치 필요 (고수요 지역)</p>
+                    <p><strong>예상 효과:</strong> 미커버 지역 해소, 주민 접근성 향상</p>
+                </div>
+
+                <div class="recommendation-item priority-1">
+                    <h4>📍 연기면 - 노선추가</h4>
+                    <p><strong>현재 상태:</strong> 노선 1개, 수요 3,506,505</p>
+                    <p><strong>제안 사항:</strong> 연기면에 추가 노선 배치 필요 (고수요 지역)</p>
+                    <p><strong>예상 효과:</strong> 미커버 지역 해소, 주민 접근성 향상</p>
+                </div>
+
+                <div class="recommendation-item priority-1">
+                    <h4>📍 금남면 - 노선추가</h4>
+                    <p><strong>현재 상태:</strong> 노선 0개, 수요 1,508,687</p>
+                    <p><strong>제안 사항:</strong> 금남면에 추가 노선 배치 필요 (고수요 지역)</p>
+                    <p><strong>예상 효과:</strong> 미커버 지역 해소, 주민 접근성 향상</p>
+                </div>
+
+                <div class="recommendation-item priority-1">
+                    <h4>📍 장군면 - 노선추가</h4>
+                    <p><strong>현재 상태:</strong> 노선 0개, 수요 1,129,797</p>
+                    <p><strong>제안 사항:</strong> 장군면에 추가 노선 배치 필요 (고수요 지역)</p>
+                    <p><strong>예상 효과:</strong> 미커버 지역 해소, 주민 접근성 향상</p>
+                </div>
+
+                <div class="recommendation-item priority-1">
+                    <h4>📍 전의면 - 노선추가</h4>
+                    <p><strong>현재 상태:</strong> 노선 2개, 수요 660,406</p>
+                    <p><strong>제안 사항:</strong> 전의면에 추가 노선 배치 필요 (고수요 지역)</p>
+                    <p><strong>예상 효과:</strong> 미커버 지역 해소, 주민 접근성 향상</p>
+                </div>
+
+                <div class="recommendation-item priority-1">
+                    <h4>📍 부강면 - 노선추가</h4>
+                    <p><strong>현재 상태:</strong> 노선 1개, 수요 425,731</p>
+                    <p><strong>제안 사항:</strong> 부강면에 추가 노선 배치 필요 (고수요 지역)</p>
+                    <p><strong>예상 효과:</strong> 미커버 지역 해소, 주민 접근성 향상</p>
+                </div>
+
+                <div class="recommendation-item priority-1">
+                    <h4>📍 전동면 - 노선추가</h4>
+                    <p><strong>현재 상태:</strong> 노선 0개, 수요 425,519</p>
+                    <p><strong>제안 사항:</strong> 전동면에 추가 노선 배치 필요 (고수요 지역)</p>
+                    <p><strong>예상 효과:</strong> 미커버 지역 해소, 주민 접근성 향상</p>
+                </div>
+
+                <div class="recommendation-item priority-1">
+                    <h4>📍 소정면 - 노선추가</h4>
+                    <p><strong>현재 상태:</strong> 노선 0개, 수요 113,614</p>
+                    <p><strong>제안 사항:</strong> 소정면에 추가 노선 배치 필요 (고수요 지역)</p>
+                    <p><strong>예상 효과:</strong> 미커버 지역 해소, 주민 접근성 향상</p>
+                </div>
+
+                <div class="recommendation-item priority-2">
+                    <h4>📍 노선 32 - 노선조정</h4>
+                    <p><strong>현재 상태:</strong> 수요밀도 1,173/km</p>
+                    <p><strong>제안 사항:</strong> 경로 재조정 또는 고수요 지역 경유 추가</p>
+                    <p><strong>예상 효과:</strong> 노선 효율성 향상, 운영 비용 절감</p>
+                </div>
+
+                <div class="recommendation-item priority-2">
+                    <h4>📍 노선 33 - 노선조정</h4>
+                    <p><strong>현재 상태:</strong> 수요밀도 919/km</p>
+                    <p><strong>제안 사항:</strong> 경로 재조정 또는 고수요 지역 경유 추가</p>
+                    <p><strong>예상 효과:</strong> 노선 효율성 향상, 운영 비용 절감</p>
+                </div>
+
+                <div class="recommendation-item priority-2">
+                    <h4>📍 노선 35 - 노선조정</h4>
+                    <p><strong>현재 상태:</strong> 수요밀도 0/km</p>
+                    <p><strong>제안 사항:</strong> 경로 재조정 또는 고수요 지역 경유 추가</p>
+                    <p><strong>예상 효과:</strong> 노선 효율성 향상, 운영 비용 절감</p>
+                </div>
+
+                <div class="recommendation-item priority-2">
+                    <h4>📍 노선 81 - 노선조정</h4>
+                    <p><strong>현재 상태:</strong> 수요밀도 0/km</p>
+                    <p><strong>제안 사항:</strong> 경로 재조정 또는 고수요 지역 경유 추가</p>
+                    <p><strong>예상 효과:</strong> 노선 효율성 향상, 운영 비용 절감</p>
+                </div>
+
+                <div class="recommendation-item priority-2">
+                    <h4>📍 노선 83 - 노선조정</h4>
+                    <p><strong>현재 상태:</strong> 수요밀도 0/km</p>
+                    <p><strong>제안 사항:</strong> 경로 재조정 또는 고수요 지역 경유 추가</p>
+                    <p><strong>예상 효과:</strong> 노선 효율성 향상, 운영 비용 절감</p>
+                </div>
+
+                <div class="recommendation-item priority-2">
+                    <h4>📍 노선 84 - 노선조정</h4>
+                    <p><strong>현재 상태:</strong> 수요밀도 0/km</p>
+                    <p><strong>제안 사항:</strong> 경로 재조정 또는 고수요 지역 경유 추가</p>
+                    <p><strong>예상 효과:</strong> 노선 효율성 향상, 운영 비용 절감</p>
+                </div>
+
+                <div class="recommendation-item priority-2">
+                    <h4>📍 노선 85 - 노선조정</h4>
+                    <p><strong>현재 상태:</strong> 수요밀도 0/km</p>
+                    <p><strong>제안 사항:</strong> 경로 재조정 또는 고수요 지역 경유 추가</p>
+                    <p><strong>예상 효과:</strong> 노선 효율성 향상, 운영 비용 절감</p>
+                </div>
+
+            </div>
+
+            <!-- 노선 중복 탭 -->
+            <div id="overlap" class="tab-content">
+                <h2>🔄 노선 중복도 분석</h2>
+
+                <table id="overlap-table">
+                    <thead>
+                        <tr>
+                            <th>노선 1</th>
+                            <th>노선 2</th>
+                            <th>공유 정류장 수</th>
+                            <th>중복 비율 (%)</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+
+                        <tr>
+                            <td><strong>91</strong></td>
+                            <td><strong>910</strong></td>
+                            <td>52</td>
+                            <td>83.9%</td>
+                        </tr>
+
+                        <tr>
+                            <td><strong>72</strong></td>
+                            <td><strong>86</strong></td>
+                            <td>48</td>
+                            <td>46.2%</td>
+                        </tr>
+
+                        <tr>
+                            <td><strong>72</strong></td>
+                            <td><strong>73</strong></td>
+                            <td>43</td>
+                            <td>79.6%</td>
+                        </tr>
+
+                        <tr>
+                            <td><strong>69</strong></td>
+                            <td><strong>691</strong></td>
+                            <td>42</td>
+                            <td>100.0%</td>
+                        </tr>
+
+                        <tr>
+                            <td><strong>16</strong></td>
+                            <td><strong>17</strong></td>
+                            <td>40</td>
+                            <td>87.0%</td>
+                        </tr>
+
+                        <tr>
+                            <td><strong>91</strong></td>
+                            <td><strong>92</strong></td>
+                            <td>40</td>
+                            <td>76.9%</td>
+                        </tr>
+
+                        <tr>
+                            <td><strong>910</strong></td>
+                            <td><strong>92</strong></td>
+                            <td>40</td>
+                            <td>76.9%</td>
+                        </tr>
+
+                        <tr>
+                            <td><strong>82</strong></td>
+                            <td><strong>86</strong></td>
+                            <td>38</td>
+                            <td>82.6%</td>
+                        </tr>
+
+                        <tr>
+                            <td><strong>66</strong></td>
+                            <td><strong>661</strong></td>
+                            <td>38</td>
+                            <td>92.7%</td>
+                        </tr>
+
+                        <tr>
+                            <td><strong>91</strong></td>
+                            <td><strong>95</strong></td>
+                            <td>38</td>
+                            <td>61.3%</td>
+                        </tr>
+
+                        <tr>
+                            <td><strong>92</strong></td>
+                            <td><strong>95</strong></td>
+                            <td>38</td>
+                            <td>73.1%</td>
+                        </tr>
+
+                        <tr>
+                            <td><strong>910</strong></td>
+                            <td><strong>95</strong></td>
+                            <td>38</td>
+                            <td>56.7%</td>
+                        </tr>
+
+                        <tr>
+                            <td><strong>31</strong></td>
+                            <td><strong>32</strong></td>
+                            <td>36</td>
+                            <td>65.5%</td>
+                        </tr>
+
+                        <tr>
+                            <td><strong>300</strong></td>
+                            <td><strong>32</strong></td>
+                            <td>36</td>
+                            <td>48.6%</td>
+                        </tr>
+
+                        <tr>
+                            <td><strong>93</strong></td>
+                            <td><strong>94</strong></td>
+                            <td>33</td>
+                            <td>62.3%</td>
+                        </tr>
+
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // 탭 전환 함수
+        function showTab(tabId) {
+            // 모든 탭과 컨텐츠 비활성화
+            document.querySelectorAll('.tab').forEach(tab => tab.classList.remove('active'));
+            document.querySelectorAll('.tab-content').forEach(content => content.classList.remove('active'));
+
+            // 선택된 탭과 컨텐츠 활성화
+            event.target.classList.add('active');
+            document.getElementById(tabId).classList.add('active');
+        }
+
+        // 효율성 차트 데이터
+        const routeData = [{"\ub178\uc120\ubc88\ud638":"53","\uc218\uc694\ubc00\ub3c4_per_km":1222776},{"\ub178\uc120\ubc88\ud638":"52","\uc218\uc694\ubc00\ub3c4_per_km":1214338},{"\ub178\uc120\ubc88\ud638":"12","\uc218\uc694\ubc00\ub3c4_per_km":1124975},{"\ub178\uc120\ubc88\ud638":"11","\uc218\uc694\ubc00\ub3c4_per_km":1105890},{"\ub178\uc120\ubc88\ud638":"13","\uc218\uc694\ubc00\ub3c4_per_km":1105217},{"\ub178\uc120\ubc88\ud638":"74","\uc218\uc694\ubc00\ub3c4_per_km":954428},{"\ub178\uc120\ubc88\ud638":"76","\uc218\uc694\ubc00\ub3c4_per_km":710434},{"\ub178\uc120\ubc88\ud638":"73","\uc218\uc694\ubc00\ub3c4_per_km":578791},{"\ub178\uc120\ubc88\ud638":"B5","\uc218\uc694\ubc00\ub3c4_per_km":276690},{"\ub178\uc120\ubc88\ud638":"203","\uc218\uc694\ubc00\ub3c4_per_km":181777},{"\ub178\uc120\ubc88\ud638":"1005","\uc218\uc694\ubc00\ub3c4_per_km":139418},{"\ub178\uc120\ubc88\ud638":"B0","\uc218\uc694\ubc00\ub3c4_per_km":123444},{"\ub178\uc120\ubc88\ud638":"1004","\uc218\uc694\ubc00\ub3c4_per_km":117649},{"\ub178\uc120\ubc88\ud638":"72","\uc218\uc694\ubc00\ub3c4_per_km":117225},{"\ub178\uc120\ubc88\ud638":"66","\uc218\uc694\ubc00\ub3c4_per_km":109634}];
+
+        const efficiencyTrace = {
+            x: routeData.map(r => r.수요밀도_per_km),
+            y: routeData.map(r => String(r.노선번호)),
+            type: 'bar',
+            orientation: 'h',
+            marker: {
+                color: routeData.map(r => {
+                    if (r.수요밀도_per_km > 200000) return '#06A77D';
+                    if (r.수요밀도_per_km > 100000) return '#48C774';
+                    if (r.수요밀도_per_km > 50000) return '#F4B41A';
+                    return '#FF9800';
+                })
+            }
+        };
+
+        const efficiencyLayout = {
+            title: '노선별 수요 밀도 Top 15',
+            xaxis: { title: '수요 밀도 (명/km)' },
+            yaxis: { title: '노선번호' },
+            height: 500
+        };
+
+        Plotly.newPlot('efficiency-chart', [efficiencyTrace], efficiencyLayout);
+
+        // 서비스 수준 차트
+        const regionData = {"\uc801\uc815":9,"\uacfc\uc789":5,"\ubbf8\ucee4\ubc84":5,"\ubd80\uc871":4};
+
+        const serviceLevelTrace = {
+            labels: Object.keys(regionData),
+            values: Object.values(regionData),
+            type: 'pie',
+            marker: {
+                colors: ['#D64933', '#F4B41A', '#06A77D', '#5C7CFA']
+            }
+        };
+
+        const serviceLevelLayout = {
+            title: '지역별 서비스 수준 분포',
+            height: 400
+        };
+
+        Plotly.newPlot('service-level-chart', [serviceLevelTrace], serviceLevelLayout);
+
+        // 수요 차트
+        const demandData = [{"\ud589\uc815\uad6c\uc5ed":"\uc870\uce58\uc6d0\uc74d","\ucd1d\uc218\uc694":11330610,"\ub178\uc120\uc218":20},{"\ud589\uc815\uad6c\uc5ed":"\ub3c4\ub2f4\ub3d9","\ucd1d\uc218\uc694":9410569,"\ub178\uc120\uc218":5},{"\ud589\uc815\uad6c\uc5ed":"\uc5b4\uc9c4\ub3d9","\ucd1d\uc218\uc694":7967642,"\ub178\uc120\uc218":6},{"\ud589\uc815\uad6c\uc5ed":"\ud55c\uc194\ub3d9","\ucd1d\uc218\uc694":6267806,"\ub178\uc120\uc218":2},{"\ud589\uc815\uad6c\uc5ed":"\uc544\ub984\ub3d9","\ucd1d\uc218\uc694":5157311,"\ub178\uc120\uc218":8},{"\ud589\uc815\uad6c\uc5ed":"\uace0\uc6b4\ub3d9","\ucd1d\uc218\uc694":4307169,"\ub178\uc120\uc218":3},{"\ud589\uc815\uad6c\uc5ed":"\ub300\ud3c9\ub3d9","\ucd1d\uc218\uc694":3810420,"\ub178\uc120\uc218":4},{"\ud589\uc815\uad6c\uc5ed":"\uc885\ucd0c\ub3d9","\ucd1d\uc218\uc694":3599774,"\ub178\uc120\uc218":11},{"\ud589\uc815\uad6c\uc5ed":"\ubc18\uace1\ub3d9","\ucd1d\uc218\uc694":3572253,"\ub178\uc120\uc218":0},{"\ud589\uc815\uad6c\uc5ed":"\uc5f0\uae30\uba74","\ucd1d\uc218\uc694":3506505,"\ub178\uc120\uc218":1},{"\ud589\uc815\uad6c\uc5ed":"\ub098\uc131\ub3d9","\ucd1d\uc218\uc694":3506260,"\ub178\uc120\uc218":6},{"\ud589\uc815\uad6c\uc5ed":"\uae08\ub0a8\uba74","\ucd1d\uc218\uc694":1508687,"\ub178\uc120\uc218":0},{"\ud589\uc815\uad6c\uc5ed":"\ubcf4\ub78c\ub3d9","\ucd1d\uc218\uc694":1159115,"\ub178\uc120\uc218":4},{"\ud589\uc815\uad6c\uc5ed":"\uc7a5\uad70\uba74","\ucd1d\uc218\uc694":1129797,"\ub178\uc120\uc218":0},{"\ud589\uc815\uad6c\uc5ed":"\ub2e4\uc815\ub3d9","\ucd1d\uc218\uc694":1047323,"\ub178\uc120\uc218":3}];
+
+        const demandTrace = {
+            x: demandData.map(r => r.행정구역),
+            y: demandData.map(r => r.총수요),
+            type: 'bar',
+            marker: {
+                color: demandData.map(r => {
+                    if (r.노선수 === 0) return '#D64933';
+                    if (r.노선수 < 3) return '#F4B41A';
+                    if (r.노선수 <= 5) return '#06A77D';
+                    return '#5C7CFA';
+                })
+            }
+        };
+
+        const demandLayout = {
+            title: '지역별 총 수요 Top 15 (색상: 서비스 수준)',
+            xaxis: { title: '행정구역' },
+            yaxis: { title: '총 수요 (명)' },
+            height: 500
+        };
+
+        Plotly.newPlot('demand-chart', [demandTrace], demandLayout);
+    </script>
+</body>
+</html>
