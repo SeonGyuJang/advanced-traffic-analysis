@@ -1,0 +1,1715 @@
+<!DOCTYPE html>
+<html>
+<head>
+    
+    <meta http-equiv="content-type" content="text/html; charset=UTF-8" />
+    <script src="https://cdn.jsdelivr.net/npm/leaflet@1.9.3/dist/leaflet.js"></script>
+    <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.2/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/Leaflet.awesome-markers/2.0.2/leaflet.awesome-markers.js"></script>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/leaflet@1.9.3/dist/leaflet.css"/>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.2.2/dist/css/bootstrap.min.css"/>
+    <link rel="stylesheet" href="https://netdna.bootstrapcdn.com/bootstrap/3.0.0/css/bootstrap-glyphicons.css"/>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@6.2.0/css/all.min.css"/>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/Leaflet.awesome-markers/2.0.2/leaflet.awesome-markers.css"/>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/python-visualization/folium/folium/templates/leaflet.awesome.rotate.min.css"/>
+    
+            <meta name="viewport" content="width=device-width,
+                initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+            <style>
+                #map_0cbee0656bb3bbebdb0122bbf95f89eb {
+                    position: relative;
+                    width: 100.0%;
+                    height: 100.0%;
+                    left: 0.0%;
+                    top: 0.0%;
+                }
+                .leaflet-container { font-size: 1rem; }
+            </style>
+
+            <style>html, body {
+                width: 100%;
+                height: 100%;
+                margin: 0;
+                padding: 0;
+            }
+            </style>
+
+            <style>#map {
+                position:absolute;
+                top:0;
+                bottom:0;
+                right:0;
+                left:0;
+                }
+            </style>
+
+            <script>
+                L_NO_TOUCH = false;
+                L_DISABLE_3D = false;
+            </script>
+
+        
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/leaflet-minimap/3.6.1/Control.MiniMap.js"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/leaflet-minimap/3.6.1/Control.MiniMap.css"/>
+    <script src="https://cdn.jsdelivr.net/npm/leaflet.fullscreen@3.0.0/Control.FullScreen.min.js"></script>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/leaflet.fullscreen@3.0.0/Control.FullScreen.css"/>
+</head>
+<body>
+    
+    
+<div style="
+    position: fixed;
+    bottom: 50px;
+    right: 50px;
+    width: 340px;
+    background: white;
+    border-radius: 10px;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+    z-index: 9999;
+    font-family: 'Malgun Gothic', sans-serif;
+    padding: 15px;
+">
+    <h4 style="margin: 0 0 12px 0; color: #2E4057; border-bottom: 2px solid #048A81; padding-bottom: 8px;">
+        🚌 세종시 버스 노선 최적화 분석
+    </h4>
+
+    <div style="margin-bottom: 12px;">
+        <div style="display: flex; align-items: center; margin-bottom: 8px;">
+            <div style="width: 20px; height: 20px; background: #D64933; border-radius: 50%; margin-right: 10px;"></div>
+            <span><b>최적화 최우선</b> (2개 노선)</span>
+        </div>
+        <div style="display: flex; align-items: center; margin-bottom: 8px;">
+            <div style="width: 20px; height: 20px; background: #F4B41A; border-radius: 50%; margin-right: 10px;"></div>
+            <span><b>최적화 필요</b> (8개 노선)</span>
+        </div>
+        <div style="display: flex; align-items: center; margin-bottom: 8px;">
+            <div style="width: 20px; height: 20px; background: #06A77D; border-radius: 50%; margin-right: 10px;"></div>
+            <span>현재 상태 양호 (57개 노선)</span>
+        </div>
+    </div>
+
+    <div style="background: #F8F9FA; padding: 10px; border-radius: 6px; font-size: 12px; margin-bottom: 10px;">
+        <table style="width: 100%; line-height: 1.8;">
+            <tr><td><b>총 노선:</b></td><td style="text-align: right;"><b>67개</b></td></tr>
+            <tr><td><b>분석 지역:</b></td><td style="text-align: right;">23개</td></tr>
+            <tr><td><b>총 이용객:</b></td><td style="text-align: right;"><b>70.2M명</b></td></tr>
+        </table>
+    </div>
+
+    <div style="background: #E3F2FD; padding: 10px; border-radius: 6px; font-size: 11px;">
+        <b>📊 배차 적정성 평가</b><br>
+        • 적정: 22개<br>
+        • 부족: 12개<br>
+        • 심각부족: 3개
+    </div>
+
+    <div style="margin-top: 10px; font-size: 11px; color: #666; text-align: center;">
+        📱 버스 마커 클릭 시 상세정보 및 최적화 제안 확인
+    </div>
+</div>
+    
+<div style="
+    position: fixed;
+    top: 80px;
+    left: 50px;
+    width: 280px;
+    background: rgba(255, 255, 255, 0.95);
+    border-radius: 10px;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+    z-index: 9999;
+    font-family: 'Malgun Gothic', sans-serif;
+    padding: 15px;
+">
+    <h4 style="margin: 0 0 10px 0; color: #2E4057;">📈 핵심 지표</h4>
+    <div style="font-size: 13px; line-height: 1.8;">
+        <div style="margin-bottom: 10px; padding-bottom: 10px; border-bottom: 1px solid #E0E0E0;">
+            <div style="color: #666; font-size: 11px;">평균 배차간격</div>
+            <div style="font-size: 20px; font-weight: bold; color: #2E4057;">
+                24.5분
+            </div>
+        </div>
+        <div style="margin-bottom: 10px; padding-bottom: 10px; border-bottom: 1px solid #E0E0E0;">
+            <div style="color: #666; font-size: 11px;">평균 운행횟수</div>
+            <div style="font-size: 20px; font-weight: bold; color: #048A81;">
+                28.2회/일
+            </div>
+        </div>
+        <div style="margin-bottom: 10px; padding-bottom: 10px; border-bottom: 1px solid #E0E0E0;">
+            <div style="color: #666; font-size: 11px;">최적화 필요 노선</div>
+            <div style="font-size: 20px; font-weight: bold; color: #D64933;">
+                10개
+            </div>
+        </div>
+        <div>
+            <div style="color: #666; font-size: 11px;">개선 가능 수요</div>
+            <div style="font-size: 18px; font-weight: bold; color: #5C7CFA;">
+                30.7M명
+            </div>
+        </div>
+    </div>
+</div>
+    
+            <div class="folium-map" id="map_0cbee0656bb3bbebdb0122bbf95f89eb" ></div>
+        
+</body>
+<script>
+    
+    
+            var map_0cbee0656bb3bbebdb0122bbf95f89eb = L.map(
+                "map_0cbee0656bb3bbebdb0122bbf95f89eb",
+                {
+                    center: [36.5, 127.25],
+                    crs: L.CRS.EPSG3857,
+                    ...{
+  "zoom": 11,
+  "zoomControl": true,
+  "preferCanvas": false,
+}
+
+                }
+            );
+            L.control.scale().addTo(map_0cbee0656bb3bbebdb0122bbf95f89eb);
+
+            
+
+        
+    
+            var tile_layer_d416c27e064282fe5f1279815324f185 = L.tileLayer(
+                "https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}{r}.png",
+                {
+  "minZoom": 0,
+  "maxZoom": 20,
+  "maxNativeZoom": 20,
+  "noWrap": false,
+  "attribution": "\u0026copy; \u003ca href=\"https://www.openstreetmap.org/copyright\"\u003eOpenStreetMap\u003c/a\u003e contributors \u0026copy; \u003ca href=\"https://carto.com/attributions\"\u003eCARTO\u003c/a\u003e",
+  "subdomains": "abcd",
+  "detectRetina": false,
+  "tms": false,
+  "opacity": 1,
+}
+
+            );
+        
+    
+            tile_layer_d416c27e064282fe5f1279815324f185.addTo(map_0cbee0656bb3bbebdb0122bbf95f89eb);
+        
+    
+            var tile_layer_d61ad3ad8a53d97e706a974a1eac3861 = L.tileLayer(
+                "https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png",
+                {
+  "minZoom": 0,
+  "maxZoom": 20,
+  "maxNativeZoom": 20,
+  "noWrap": false,
+  "attribution": "\u0026copy; \u003ca href=\"https://www.openstreetmap.org/copyright\"\u003eOpenStreetMap\u003c/a\u003e contributors \u0026copy; \u003ca href=\"https://carto.com/attributions\"\u003eCARTO\u003c/a\u003e",
+  "subdomains": "abcd",
+  "detectRetina": false,
+  "tms": false,
+  "opacity": 1,
+}
+
+            );
+        
+    
+            tile_layer_d61ad3ad8a53d97e706a974a1eac3861.addTo(map_0cbee0656bb3bbebdb0122bbf95f89eb);
+        
+    
+            var tile_layer_3021b0bc54231a32266784008e2b3b4d = L.tileLayer(
+                "https://tile.openstreetmap.org/{z}/{x}/{y}.png",
+                {
+  "minZoom": 0,
+  "maxZoom": 19,
+  "maxNativeZoom": 19,
+  "noWrap": false,
+  "attribution": "\u0026copy; \u003ca href=\"https://www.openstreetmap.org/copyright\"\u003eOpenStreetMap\u003c/a\u003e contributors",
+  "subdomains": "abc",
+  "detectRetina": false,
+  "tms": false,
+  "opacity": 1,
+}
+
+            );
+        
+    
+            tile_layer_3021b0bc54231a32266784008e2b3b4d.addTo(map_0cbee0656bb3bbebdb0122bbf95f89eb);
+        
+    
+            var feature_group_ca124d9f66c59890e9a90c0b4911b1ce = L.featureGroup(
+                {
+}
+            );
+        
+    
+            var circle_marker_33a54e77d610c0c8835fce080e4df53a = L.circleMarker(
+                [36.51257075008273, 127.23435639079872],
+                {"bubblingMouseEvents": true, "color": "#5C7CFA", "dashArray": null, "dashOffset": null, "fill": true, "fillColor": "#5C7CFA", "fillOpacity": 0.4, "fillRule": "evenodd", "lineCap": "round", "lineJoin": "round", "opacity": 1.0, "radius": 5.140742201876157, "stroke": true, "weight": 2}
+            ).addTo(feature_group_ca124d9f66c59890e9a90c0b4911b1ce);
+        
+    
+        var popup_4a5ec60e6cf6e5faa9b7421e3eed39b9 = L.popup({
+  "maxWidth": 300,
+});
+
+        
+            
+                var html_443ce212a3ed953142a3394e94281841 = $(`<div id="html_443ce212a3ed953142a3394e94281841" style="width: 100.0%; height: 100.0%;">     <div style="font-family: 'Malgun Gothic', sans-serif; min-width: 250px;">         <h4 style="margin:0 0 10px 0; color: #5C7CFA;">📍 가람동</h4>         <table style="width: 100%; font-size: 12px;">             <tr><td><b>총 이용객</b></td><td><b>106,313명</b></td></tr>             <tr><td>승차</td><td>49,869명</td></tr>             <tr><td>하차</td><td>56,444명</td></tr>             <tr><td>환승</td><td>9,641명</td></tr>         </table>     </div>     </div>`)[0];
+                popup_4a5ec60e6cf6e5faa9b7421e3eed39b9.setContent(html_443ce212a3ed953142a3394e94281841);
+            
+        
+
+        circle_marker_33a54e77d610c0c8835fce080e4df53a.bindPopup(popup_4a5ec60e6cf6e5faa9b7421e3eed39b9)
+        ;
+
+        
+    
+    
+            circle_marker_33a54e77d610c0c8835fce080e4df53a.bindTooltip(
+                `<div>
+                     가람동: 106K명
+                 </div>`,
+                {
+  "sticky": true,
+}
+            );
+        
+    
+            var circle_marker_f97740dbe0c16c6587eebbec67bab787 = L.circleMarker(
+                [36.48383790989991, 127.30078536937935],
+                {"bubblingMouseEvents": true, "color": "#F4B41A", "dashArray": null, "dashOffset": null, "fill": true, "fillColor": "#F4B41A", "fillOpacity": 0.4, "fillRule": "evenodd", "lineCap": "round", "lineJoin": "round", "opacity": 1.0, "radius": 10.702035018414719, "stroke": true, "weight": 2}
+            ).addTo(feature_group_ca124d9f66c59890e9a90c0b4911b1ce);
+        
+    
+        var popup_fe181864f80d07cea89fb7a7afc6a061 = L.popup({
+  "maxWidth": 300,
+});
+
+        
+            
+                var html_acb81db031e1e322a3311562c3145aa6 = $(`<div id="html_acb81db031e1e322a3311562c3145aa6" style="width: 100.0%; height: 100.0%;">     <div style="font-family: 'Malgun Gothic', sans-serif; min-width: 250px;">         <h4 style="margin:0 0 10px 0; color: #F4B41A;">📍 고운동</h4>         <table style="width: 100%; font-size: 12px;">             <tr><td><b>총 이용객</b></td><td><b>4,307,169명</b></td></tr>             <tr><td>승차</td><td>2,338,141명</td></tr>             <tr><td>하차</td><td>1,969,028명</td></tr>             <tr><td>환승</td><td>180,509명</td></tr>         </table>     </div>     </div>`)[0];
+                popup_fe181864f80d07cea89fb7a7afc6a061.setContent(html_acb81db031e1e322a3311562c3145aa6);
+            
+        
+
+        circle_marker_f97740dbe0c16c6587eebbec67bab787.bindPopup(popup_fe181864f80d07cea89fb7a7afc6a061)
+        ;
+
+        
+    
+    
+            circle_marker_f97740dbe0c16c6587eebbec67bab787.bindTooltip(
+                `<div>
+                     고운동: 4307K명
+                 </div>`,
+                {
+  "sticky": true,
+}
+            );
+        
+    
+            var circle_marker_8731c14cb6f76b86d26f0f6bbaa56734 = L.circleMarker(
+                [36.45470547400584, 127.29228850731104],
+                {"bubblingMouseEvents": true, "color": "#5C7CFA", "dashArray": null, "dashOffset": null, "fill": true, "fillColor": "#5C7CFA", "fillOpacity": 0.4, "fillRule": "evenodd", "lineCap": "round", "lineJoin": "round", "opacity": 1.0, "radius": 6.997271550251928, "stroke": true, "weight": 2}
+            ).addTo(feature_group_ca124d9f66c59890e9a90c0b4911b1ce);
+        
+    
+        var popup_8b3362b5db5962135156e7a590f8f460 = L.popup({
+  "maxWidth": 300,
+});
+
+        
+            
+                var html_3d3f9283e49047ffc5599cbabfa2c916 = $(`<div id="html_3d3f9283e49047ffc5599cbabfa2c916" style="width: 100.0%; height: 100.0%;">     <div style="font-family: 'Malgun Gothic', sans-serif; min-width: 250px;">         <h4 style="margin:0 0 10px 0; color: #5C7CFA;">📍 금남면</h4>         <table style="width: 100%; font-size: 12px;">             <tr><td><b>총 이용객</b></td><td><b>1,508,687명</b></td></tr>             <tr><td>승차</td><td>833,910명</td></tr>             <tr><td>하차</td><td>674,777명</td></tr>             <tr><td>환승</td><td>96,217명</td></tr>         </table>     </div>     </div>`)[0];
+                popup_8b3362b5db5962135156e7a590f8f460.setContent(html_3d3f9283e49047ffc5599cbabfa2c916);
+            
+        
+
+        circle_marker_8731c14cb6f76b86d26f0f6bbaa56734.bindPopup(popup_8b3362b5db5962135156e7a590f8f460)
+        ;
+
+        
+    
+    
+            circle_marker_8731c14cb6f76b86d26f0f6bbaa56734.bindTooltip(
+                `<div>
+                     금남면: 1509K명
+                 </div>`,
+                {
+  "sticky": true,
+}
+            );
+        
+    
+            var circle_marker_5bb6883f2b6ce1548a057778564f8e4f = L.circleMarker(
+                [36.50359301869778, 127.2476285776662],
+                {"bubblingMouseEvents": true, "color": "#F4B41A", "dashArray": null, "dashOffset": null, "fill": true, "fillColor": "#F4B41A", "fillOpacity": 0.4, "fillRule": "evenodd", "lineCap": "round", "lineJoin": "round", "opacity": 1.0, "radius": 9.641753621384904, "stroke": true, "weight": 2}
+            ).addTo(feature_group_ca124d9f66c59890e9a90c0b4911b1ce);
+        
+    
+        var popup_ce8ceed86fa2fcfa6a8917b1fedb8f53 = L.popup({
+  "maxWidth": 300,
+});
+
+        
+            
+                var html_bfaf107d16500e762afe3d9fbb98c2fb = $(`<div id="html_bfaf107d16500e762afe3d9fbb98c2fb" style="width: 100.0%; height: 100.0%;">     <div style="font-family: 'Malgun Gothic', sans-serif; min-width: 250px;">         <h4 style="margin:0 0 10px 0; color: #F4B41A;">📍 나성동</h4>         <table style="width: 100%; font-size: 12px;">             <tr><td><b>총 이용객</b></td><td><b>3,506,260명</b></td></tr>             <tr><td>승차</td><td>1,924,198명</td></tr>             <tr><td>하차</td><td>1,582,062명</td></tr>             <tr><td>환승</td><td>258,373명</td></tr>         </table>     </div>     </div>`)[0];
+                popup_ce8ceed86fa2fcfa6a8917b1fedb8f53.setContent(html_bfaf107d16500e762afe3d9fbb98c2fb);
+            
+        
+
+        circle_marker_5bb6883f2b6ce1548a057778564f8e4f.bindPopup(popup_ce8ceed86fa2fcfa6a8917b1fedb8f53)
+        ;
+
+        
+    
+    
+            circle_marker_5bb6883f2b6ce1548a057778564f8e4f.bindTooltip(
+                `<div>
+                     나성동: 3506K명
+                 </div>`,
+                {
+  "sticky": true,
+}
+            );
+        
+    
+            var circle_marker_73b0949398d4144822a458783aaab862 = L.circleMarker(
+                [36.51580295414939, 127.2489455788452],
+                {"bubblingMouseEvents": true, "color": "#5C7CFA", "dashArray": null, "dashOffset": null, "fill": true, "fillColor": "#5C7CFA", "fillOpacity": 0.4, "fillRule": "evenodd", "lineCap": "round", "lineJoin": "round", "opacity": 1.0, "radius": 6.386495960941202, "stroke": true, "weight": 2}
+            ).addTo(feature_group_ca124d9f66c59890e9a90c0b4911b1ce);
+        
+    
+        var popup_5f207eec41d45339cfbd689abd5a73a9 = L.popup({
+  "maxWidth": 300,
+});
+
+        
+            
+                var html_85308a8be0ce7f7840de4bc0127a5be3 = $(`<div id="html_85308a8be0ce7f7840de4bc0127a5be3" style="width: 100.0%; height: 100.0%;">     <div style="font-family: 'Malgun Gothic', sans-serif; min-width: 250px;">         <h4 style="margin:0 0 10px 0; color: #5C7CFA;">📍 다정동</h4>         <table style="width: 100%; font-size: 12px;">             <tr><td><b>총 이용객</b></td><td><b>1,047,323명</b></td></tr>             <tr><td>승차</td><td>540,318명</td></tr>             <tr><td>하차</td><td>507,005명</td></tr>             <tr><td>환승</td><td>36,828명</td></tr>         </table>     </div>     </div>`)[0];
+                popup_5f207eec41d45339cfbd689abd5a73a9.setContent(html_85308a8be0ce7f7840de4bc0127a5be3);
+            
+        
+
+        circle_marker_73b0949398d4144822a458783aaab862.bindPopup(popup_5f207eec41d45339cfbd689abd5a73a9)
+        ;
+
+        
+    
+    
+            circle_marker_73b0949398d4144822a458783aaab862.bindTooltip(
+                `<div>
+                     다정동: 1047K명
+                 </div>`,
+                {
+  "sticky": true,
+}
+            );
+        
+    
+            var circle_marker_af14f6a9e9cb3f47de5897da64e80035 = L.circleMarker(
+                [36.4951317676075, 127.24600401095556],
+                {"bubblingMouseEvents": true, "color": "#F4B41A", "dashArray": null, "dashOffset": null, "fill": true, "fillColor": "#F4B41A", "fillOpacity": 0.4, "fillRule": "evenodd", "lineCap": "round", "lineJoin": "round", "opacity": 1.0, "radius": 10.044415084448234, "stroke": true, "weight": 2}
+            ).addTo(feature_group_ca124d9f66c59890e9a90c0b4911b1ce);
+        
+    
+        var popup_69e8498a73ddc4cc54d7eea4715aab36 = L.popup({
+  "maxWidth": 300,
+});
+
+        
+            
+                var html_cb55b1424e5ce2a1c9070a10173df483 = $(`<div id="html_cb55b1424e5ce2a1c9070a10173df483" style="width: 100.0%; height: 100.0%;">     <div style="font-family: 'Malgun Gothic', sans-serif; min-width: 250px;">         <h4 style="margin:0 0 10px 0; color: #F4B41A;">📍 대평동</h4>         <table style="width: 100%; font-size: 12px;">             <tr><td><b>총 이용객</b></td><td><b>3,810,420명</b></td></tr>             <tr><td>승차</td><td>1,986,428명</td></tr>             <tr><td>하차</td><td>1,823,992명</td></tr>             <tr><td>환승</td><td>1,259,792명</td></tr>         </table>     </div>     </div>`)[0];
+                popup_69e8498a73ddc4cc54d7eea4715aab36.setContent(html_cb55b1424e5ce2a1c9070a10173df483);
+            
+        
+
+        circle_marker_af14f6a9e9cb3f47de5897da64e80035.bindPopup(popup_69e8498a73ddc4cc54d7eea4715aab36)
+        ;
+
+        
+    
+    
+            circle_marker_af14f6a9e9cb3f47de5897da64e80035.bindTooltip(
+                `<div>
+                     대평동: 3810K명
+                 </div>`,
+                {
+  "sticky": true,
+}
+            );
+        
+    
+            var circle_marker_01fa6f359b3db7a453316d69526370bf = L.circleMarker(
+                [36.47843613805419, 127.25415120534784],
+                {"bubblingMouseEvents": true, "color": "#D64933", "dashArray": null, "dashOffset": null, "fill": true, "fillColor": "#D64933", "fillOpacity": 0.4, "fillRule": "evenodd", "lineCap": "round", "lineJoin": "round", "opacity": 1.0, "radius": 17.45815847513947, "stroke": true, "weight": 2}
+            ).addTo(feature_group_ca124d9f66c59890e9a90c0b4911b1ce);
+        
+    
+        var popup_dd93239cbf5649e0830978d88399e4c8 = L.popup({
+  "maxWidth": 300,
+});
+
+        
+            
+                var html_9318e38fdafd4853eb1115d370a2ec79 = $(`<div id="html_9318e38fdafd4853eb1115d370a2ec79" style="width: 100.0%; height: 100.0%;">     <div style="font-family: 'Malgun Gothic', sans-serif; min-width: 250px;">         <h4 style="margin:0 0 10px 0; color: #D64933;">📍 도담동</h4>         <table style="width: 100%; font-size: 12px;">             <tr><td><b>총 이용객</b></td><td><b>9,410,569명</b></td></tr>             <tr><td>승차</td><td>5,043,017명</td></tr>             <tr><td>하차</td><td>4,367,552명</td></tr>             <tr><td>환승</td><td>1,330,201명</td></tr>         </table>     </div>     </div>`)[0];
+                popup_dd93239cbf5649e0830978d88399e4c8.setContent(html_9318e38fdafd4853eb1115d370a2ec79);
+            
+        
+
+        circle_marker_01fa6f359b3db7a453316d69526370bf.bindPopup(popup_dd93239cbf5649e0830978d88399e4c8)
+        ;
+
+        
+    
+    
+            circle_marker_01fa6f359b3db7a453316d69526370bf.bindTooltip(
+                `<div>
+                     도담동: 9411K명
+                 </div>`,
+                {
+  "sticky": true,
+}
+            );
+        
+    
+            var circle_marker_b72fa4077d80fb226f6e51aa98aa46d3 = L.circleMarker(
+                [36.526619221838565, 127.2699922070016],
+                {"bubblingMouseEvents": true, "color": "#F4B41A", "dashArray": null, "dashOffset": null, "fill": true, "fillColor": "#F4B41A", "fillOpacity": 0.4, "fillRule": "evenodd", "lineCap": "round", "lineJoin": "round", "opacity": 1.0, "radius": 9.729118291071707, "stroke": true, "weight": 2}
+            ).addTo(feature_group_ca124d9f66c59890e9a90c0b4911b1ce);
+        
+    
+        var popup_2f963d3187b022e9dfa8e400f9387216 = L.popup({
+  "maxWidth": 300,
+});
+
+        
+            
+                var html_68900bd287b98d3837d1793a61a651fc = $(`<div id="html_68900bd287b98d3837d1793a61a651fc" style="width: 100.0%; height: 100.0%;">     <div style="font-family: 'Malgun Gothic', sans-serif; min-width: 250px;">         <h4 style="margin:0 0 10px 0; color: #F4B41A;">📍 반곡동</h4>         <table style="width: 100%; font-size: 12px;">             <tr><td><b>총 이용객</b></td><td><b>3,572,253명</b></td></tr>             <tr><td>승차</td><td>1,856,244명</td></tr>             <tr><td>하차</td><td>1,716,009명</td></tr>             <tr><td>환승</td><td>143,914명</td></tr>         </table>     </div>     </div>`)[0];
+                popup_2f963d3187b022e9dfa8e400f9387216.setContent(html_68900bd287b98d3837d1793a61a651fc);
+            
+        
+
+        circle_marker_b72fa4077d80fb226f6e51aa98aa46d3.bindPopup(popup_2f963d3187b022e9dfa8e400f9387216)
+        ;
+
+        
+    
+    
+            circle_marker_b72fa4077d80fb226f6e51aa98aa46d3.bindTooltip(
+                `<div>
+                     반곡동: 3572K명
+                 </div>`,
+                {
+  "sticky": true,
+}
+            );
+        
+    
+            var circle_marker_3cbfa43a96039a15cb0100ca44b60bfa = L.circleMarker(
+                [36.474705474005845, 127.30228850731103],
+                {"bubblingMouseEvents": true, "color": "#5C7CFA", "dashArray": null, "dashOffset": null, "fill": true, "fillColor": "#5C7CFA", "fillOpacity": 0.4, "fillRule": "evenodd", "lineCap": "round", "lineJoin": "round", "opacity": 1.0, "radius": 5.0014668230571875, "stroke": true, "weight": 2}
+            ).addTo(feature_group_ca124d9f66c59890e9a90c0b4911b1ce);
+        
+    
+        var popup_255d1e8e0b5f8a5ac438add8f28136c8 = L.popup({
+  "maxWidth": 300,
+});
+
+        
+            
+                var html_37354c4ddd175f070b1cab6289f7cffc = $(`<div id="html_37354c4ddd175f070b1cab6289f7cffc" style="width: 100.0%; height: 100.0%;">     <div style="font-family: 'Malgun Gothic', sans-serif; min-width: 250px;">         <h4 style="margin:0 0 10px 0; color: #5C7CFA;">📍 반포면</h4>         <table style="width: 100%; font-size: 12px;">             <tr><td><b>총 이용객</b></td><td><b>1,108명</b></td></tr>             <tr><td>승차</td><td>406명</td></tr>             <tr><td>하차</td><td>702명</td></tr>             <tr><td>환승</td><td>4명</td></tr>         </table>     </div>     </div>`)[0];
+                popup_255d1e8e0b5f8a5ac438add8f28136c8.setContent(html_37354c4ddd175f070b1cab6289f7cffc);
+            
+        
+
+        circle_marker_3cbfa43a96039a15cb0100ca44b60bfa.bindPopup(popup_255d1e8e0b5f8a5ac438add8f28136c8)
+        ;
+
+        
+    
+    
+            circle_marker_3cbfa43a96039a15cb0100ca44b60bfa.bindTooltip(
+                `<div>
+                     반포면: 1K명
+                 </div>`,
+                {
+  "sticky": true,
+}
+            );
+        
+    
+            var circle_marker_6d7bbbcb9704f47547fddfd8d4aed7fd = L.circleMarker(
+                [36.485426850443, 127.25056798485532],
+                {"bubblingMouseEvents": true, "color": "#5C7CFA", "dashArray": null, "dashOffset": null, "fill": true, "fillColor": "#5C7CFA", "fillOpacity": 0.4, "fillRule": "evenodd", "lineCap": "round", "lineJoin": "round", "opacity": 1.0, "radius": 6.5344915234043, "stroke": true, "weight": 2}
+            ).addTo(feature_group_ca124d9f66c59890e9a90c0b4911b1ce);
+        
+    
+        var popup_47f2ffd1a927715500670c890b09b096 = L.popup({
+  "maxWidth": 300,
+});
+
+        
+            
+                var html_86b5be1e6ef622892c6e7a6ae2c0d599 = $(`<div id="html_86b5be1e6ef622892c6e7a6ae2c0d599" style="width: 100.0%; height: 100.0%;">     <div style="font-family: 'Malgun Gothic', sans-serif; min-width: 250px;">         <h4 style="margin:0 0 10px 0; color: #5C7CFA;">📍 보람동</h4>         <table style="width: 100%; font-size: 12px;">             <tr><td><b>총 이용객</b></td><td><b>1,159,115명</b></td></tr>             <tr><td>승차</td><td>625,666명</td></tr>             <tr><td>하차</td><td>533,449명</td></tr>             <tr><td>환승</td><td>88,197명</td></tr>         </table>     </div>     </div>`)[0];
+                popup_47f2ffd1a927715500670c890b09b096.setContent(html_86b5be1e6ef622892c6e7a6ae2c0d599);
+            
+        
+
+        circle_marker_6d7bbbcb9704f47547fddfd8d4aed7fd.bindPopup(popup_47f2ffd1a927715500670c890b09b096)
+        ;
+
+        
+    
+    
+            circle_marker_6d7bbbcb9704f47547fddfd8d4aed7fd.bindTooltip(
+                `<div>
+                     보람동: 1159K명
+                 </div>`,
+                {
+  "sticky": true,
+}
+            );
+        
+    
+            var circle_marker_f02d1d7f3454d8446ae8bd1fa5996830 = L.circleMarker(
+                [36.52446511075059, 127.37443103930968],
+                {"bubblingMouseEvents": true, "color": "#5C7CFA", "dashArray": null, "dashOffset": null, "fill": true, "fillColor": "#5C7CFA", "fillOpacity": 0.4, "fillRule": "evenodd", "lineCap": "round", "lineJoin": "round", "opacity": 1.0, "radius": 5.56360293046888, "stroke": true, "weight": 2}
+            ).addTo(feature_group_ca124d9f66c59890e9a90c0b4911b1ce);
+        
+    
+        var popup_3d2797189c1ace54a882d99701b13297 = L.popup({
+  "maxWidth": 300,
+});
+
+        
+            
+                var html_0804bacc3ca9d9f4f8b224ff8bb59742 = $(`<div id="html_0804bacc3ca9d9f4f8b224ff8bb59742" style="width: 100.0%; height: 100.0%;">     <div style="font-family: 'Malgun Gothic', sans-serif; min-width: 250px;">         <h4 style="margin:0 0 10px 0; color: #5C7CFA;">📍 부강면</h4>         <table style="width: 100%; font-size: 12px;">             <tr><td><b>총 이용객</b></td><td><b>425,731명</b></td></tr>             <tr><td>승차</td><td>242,728명</td></tr>             <tr><td>하차</td><td>183,003명</td></tr>             <tr><td>환승</td><td>12,239명</td></tr>         </table>     </div>     </div>`)[0];
+                popup_3d2797189c1ace54a882d99701b13297.setContent(html_0804bacc3ca9d9f4f8b224ff8bb59742);
+            
+        
+
+        circle_marker_f02d1d7f3454d8446ae8bd1fa5996830.bindPopup(popup_3d2797189c1ace54a882d99701b13297)
+        ;
+
+        
+    
+    
+            circle_marker_f02d1d7f3454d8446ae8bd1fa5996830.bindTooltip(
+                `<div>
+                     부강면: 426K명
+                 </div>`,
+                {
+  "sticky": true,
+}
+            );
+        
+    
+            var circle_marker_98bec31876f68ff3f18155617bee4f90 = L.circleMarker(
+                [36.71294139639835, 127.1663786974725],
+                {"bubblingMouseEvents": true, "color": "#5C7CFA", "dashArray": null, "dashOffset": null, "fill": true, "fillColor": "#5C7CFA", "fillOpacity": 0.4, "fillRule": "evenodd", "lineCap": "round", "lineJoin": "round", "opacity": 1.0, "radius": 5.150407612652805, "stroke": true, "weight": 2}
+            ).addTo(feature_group_ca124d9f66c59890e9a90c0b4911b1ce);
+        
+    
+        var popup_6787b5f42811399686c63665d896aad7 = L.popup({
+  "maxWidth": 300,
+});
+
+        
+            
+                var html_33ea53e4f62005280f121fe4d4e7ffbb = $(`<div id="html_33ea53e4f62005280f121fe4d4e7ffbb" style="width: 100.0%; height: 100.0%;">     <div style="font-family: 'Malgun Gothic', sans-serif; min-width: 250px;">         <h4 style="margin:0 0 10px 0; color: #5C7CFA;">📍 소정면</h4>         <table style="width: 100%; font-size: 12px;">             <tr><td><b>총 이용객</b></td><td><b>113,614명</b></td></tr>             <tr><td>승차</td><td>70,562명</td></tr>             <tr><td>하차</td><td>43,052명</td></tr>             <tr><td>환승</td><td>857명</td></tr>         </table>     </div>     </div>`)[0];
+                popup_6787b5f42811399686c63665d896aad7.setContent(html_33ea53e4f62005280f121fe4d4e7ffbb);
+            
+        
+
+        circle_marker_98bec31876f68ff3f18155617bee4f90.bindPopup(popup_6787b5f42811399686c63665d896aad7)
+        ;
+
+        
+    
+    
+            circle_marker_98bec31876f68ff3f18155617bee4f90.bindTooltip(
+                `<div>
+                     소정면: 114K명
+                 </div>`,
+                {
+  "sticky": true,
+}
+            );
+        
+    
+            var circle_marker_276ea61f86f60f47ecb499a2d01759b5 = L.circleMarker(
+                [36.4777785333046, 127.29044246696756],
+                {"bubblingMouseEvents": true, "color": "#F4B41A", "dashArray": null, "dashOffset": null, "fill": true, "fillColor": "#F4B41A", "fillOpacity": 0.4, "fillRule": "evenodd", "lineCap": "round", "lineJoin": "round", "opacity": 1.0, "radius": 11.827493400620089, "stroke": true, "weight": 2}
+            ).addTo(feature_group_ca124d9f66c59890e9a90c0b4911b1ce);
+        
+    
+        var popup_fe1f7f8181ff798d5dd2d8a88a8ddea4 = L.popup({
+  "maxWidth": 300,
+});
+
+        
+            
+                var html_4e66673c4c5d066cb7ecc5d6bc97ac7e = $(`<div id="html_4e66673c4c5d066cb7ecc5d6bc97ac7e" style="width: 100.0%; height: 100.0%;">     <div style="font-family: 'Malgun Gothic', sans-serif; min-width: 250px;">         <h4 style="margin:0 0 10px 0; color: #F4B41A;">📍 아름동</h4>         <table style="width: 100%; font-size: 12px;">             <tr><td><b>총 이용객</b></td><td><b>5,157,311명</b></td></tr>             <tr><td>승차</td><td>2,774,151명</td></tr>             <tr><td>하차</td><td>2,383,160명</td></tr>             <tr><td>환승</td><td>209,365명</td></tr>         </table>     </div>     </div>`)[0];
+                popup_fe1f7f8181ff798d5dd2d8a88a8ddea4.setContent(html_4e66673c4c5d066cb7ecc5d6bc97ac7e);
+            
+        
+
+        circle_marker_276ea61f86f60f47ecb499a2d01759b5.bindPopup(popup_fe1f7f8181ff798d5dd2d8a88a8ddea4)
+        ;
+
+        
+    
+    
+            circle_marker_276ea61f86f60f47ecb499a2d01759b5.bindTooltip(
+                `<div>
+                     아름동: 5157K명
+                 </div>`,
+                {
+  "sticky": true,
+}
+            );
+        
+    
+            var circle_marker_f85dabf6cf549dd0d98d48f3c1370ad6 = L.circleMarker(
+                [36.48828010375694, 127.26079412168929],
+                {"bubblingMouseEvents": true, "color": "#D64933", "dashArray": null, "dashOffset": null, "fill": true, "fillColor": "#D64933", "fillOpacity": 0.4, "fillRule": "evenodd", "lineCap": "round", "lineJoin": "round", "opacity": 1.0, "radius": 15.547943138101127, "stroke": true, "weight": 2}
+            ).addTo(feature_group_ca124d9f66c59890e9a90c0b4911b1ce);
+        
+    
+        var popup_a8418511e5ea8fe76e36c62a02636267 = L.popup({
+  "maxWidth": 300,
+});
+
+        
+            
+                var html_c44d46b3a1fbada1344afee9aed201f3 = $(`<div id="html_c44d46b3a1fbada1344afee9aed201f3" style="width: 100.0%; height: 100.0%;">     <div style="font-family: 'Malgun Gothic', sans-serif; min-width: 250px;">         <h4 style="margin:0 0 10px 0; color: #D64933;">📍 어진동</h4>         <table style="width: 100%; font-size: 12px;">             <tr><td><b>총 이용객</b></td><td><b>7,967,642명</b></td></tr>             <tr><td>승차</td><td>4,112,090명</td></tr>             <tr><td>하차</td><td>3,855,552명</td></tr>             <tr><td>환승</td><td>976,178명</td></tr>         </table>     </div>     </div>`)[0];
+                popup_a8418511e5ea8fe76e36c62a02636267.setContent(html_c44d46b3a1fbada1344afee9aed201f3);
+            
+        
+
+        circle_marker_f85dabf6cf549dd0d98d48f3c1370ad6.bindPopup(popup_a8418511e5ea8fe76e36c62a02636267)
+        ;
+
+        
+    
+    
+            circle_marker_f85dabf6cf549dd0d98d48f3c1370ad6.bindTooltip(
+                `<div>
+                     어진동: 7968K명
+                 </div>`,
+                {
+  "sticky": true,
+}
+            );
+        
+    
+            var circle_marker_7cb031130f1316f3fdae1dcc291965f2 = L.circleMarker(
+                [36.54572597176921, 127.26248449797936],
+                {"bubblingMouseEvents": true, "color": "#F4B41A", "dashArray": null, "dashOffset": null, "fill": true, "fillColor": "#F4B41A", "fillOpacity": 0.4, "fillRule": "evenodd", "lineCap": "round", "lineJoin": "round", "opacity": 1.0, "radius": 9.642077964028415, "stroke": true, "weight": 2}
+            ).addTo(feature_group_ca124d9f66c59890e9a90c0b4911b1ce);
+        
+    
+        var popup_8fae86ad0a09b62a074afcd87961fc26 = L.popup({
+  "maxWidth": 300,
+});
+
+        
+            
+                var html_d691521cfd1701c47a83be0f32c2bc43 = $(`<div id="html_d691521cfd1701c47a83be0f32c2bc43" style="width: 100.0%; height: 100.0%;">     <div style="font-family: 'Malgun Gothic', sans-serif; min-width: 250px;">         <h4 style="margin:0 0 10px 0; color: #F4B41A;">📍 연기면</h4>         <table style="width: 100%; font-size: 12px;">             <tr><td><b>총 이용객</b></td><td><b>3,506,505명</b></td></tr>             <tr><td>승차</td><td>1,882,955명</td></tr>             <tr><td>하차</td><td>1,623,550명</td></tr>             <tr><td>환승</td><td>226,572명</td></tr>         </table>     </div>     </div>`)[0];
+                popup_8fae86ad0a09b62a074afcd87961fc26.setContent(html_d691521cfd1701c47a83be0f32c2bc43);
+            
+        
+
+        circle_marker_7cb031130f1316f3fdae1dcc291965f2.bindPopup(popup_8fae86ad0a09b62a074afcd87961fc26)
+        ;
+
+        
+    
+    
+            circle_marker_7cb031130f1316f3fdae1dcc291965f2.bindTooltip(
+                `<div>
+                     연기면: 3507K명
+                 </div>`,
+                {
+  "sticky": true,
+}
+            );
+        
+    
+            var circle_marker_1748dde18b65c7c5350bacd8942e7359 = L.circleMarker(
+                [36.553692088908726, 127.33097711525976],
+                {"bubblingMouseEvents": true, "color": "#5C7CFA", "dashArray": null, "dashOffset": null, "fill": true, "fillColor": "#5C7CFA", "fillOpacity": 0.4, "fillRule": "evenodd", "lineCap": "round", "lineJoin": "round", "opacity": 1.0, "radius": 5.324610060711647, "stroke": true, "weight": 2}
+            ).addTo(feature_group_ca124d9f66c59890e9a90c0b4911b1ce);
+        
+    
+        var popup_71e396534be5090f600529a4b9f05af2 = L.popup({
+  "maxWidth": 300,
+});
+
+        
+            
+                var html_7a9717984553ae32c2f6c56934c53cee = $(`<div id="html_7a9717984553ae32c2f6c56934c53cee" style="width: 100.0%; height: 100.0%;">     <div style="font-family: 'Malgun Gothic', sans-serif; min-width: 250px;">         <h4 style="margin:0 0 10px 0; color: #5C7CFA;">📍 연동면</h4>         <table style="width: 100%; font-size: 12px;">             <tr><td><b>총 이용객</b></td><td><b>245,202명</b></td></tr>             <tr><td>승차</td><td>141,274명</td></tr>             <tr><td>하차</td><td>103,928명</td></tr>             <tr><td>환승</td><td>6,120명</td></tr>         </table>     </div>     </div>`)[0];
+                popup_71e396534be5090f600529a4b9f05af2.setContent(html_7a9717984553ae32c2f6c56934c53cee);
+            
+        
+
+        circle_marker_1748dde18b65c7c5350bacd8942e7359.bindPopup(popup_71e396534be5090f600529a4b9f05af2)
+        ;
+
+        
+    
+    
+            circle_marker_1748dde18b65c7c5350bacd8942e7359.bindTooltip(
+                `<div>
+                     연동면: 245K명
+                 </div>`,
+                {
+  "sticky": true,
+}
+            );
+        
+    
+            var circle_marker_0458f2823632756494fece06a8f1d5c0 = L.circleMarker(
+                [36.57723225156481, 127.25591941732252],
+                {"bubblingMouseEvents": true, "color": "#5C7CFA", "dashArray": null, "dashOffset": null, "fill": true, "fillColor": "#5C7CFA", "fillOpacity": 0.4, "fillRule": "evenodd", "lineCap": "round", "lineJoin": "round", "opacity": 1.0, "radius": 6.2394562163908205, "stroke": true, "weight": 2}
+            ).addTo(feature_group_ca124d9f66c59890e9a90c0b4911b1ce);
+        
+    
+        var popup_6d3a0ea37ca38f4b1ac698df8cd6410d = L.popup({
+  "maxWidth": 300,
+});
+
+        
+            
+                var html_494f3dbaf2befbc6d0f2dc548d04e334 = $(`<div id="html_494f3dbaf2befbc6d0f2dc548d04e334" style="width: 100.0%; height: 100.0%;">     <div style="font-family: 'Malgun Gothic', sans-serif; min-width: 250px;">         <h4 style="margin:0 0 10px 0; color: #5C7CFA;">📍 연서면</h4>         <table style="width: 100%; font-size: 12px;">             <tr><td><b>총 이용객</b></td><td><b>936,253명</b></td></tr>             <tr><td>승차</td><td>509,392명</td></tr>             <tr><td>하차</td><td>426,861명</td></tr>             <tr><td>환승</td><td>47,569명</td></tr>         </table>     </div>     </div>`)[0];
+                popup_6d3a0ea37ca38f4b1ac698df8cd6410d.setContent(html_494f3dbaf2befbc6d0f2dc548d04e334);
+            
+        
+
+        circle_marker_0458f2823632756494fece06a8f1d5c0.bindPopup(popup_6d3a0ea37ca38f4b1ac698df8cd6410d)
+        ;
+
+        
+    
+    
+            circle_marker_0458f2823632756494fece06a8f1d5c0.bindTooltip(
+                `<div>
+                     연서면: 936K명
+                 </div>`,
+                {
+  "sticky": true,
+}
+            );
+        
+    
+            var circle_marker_811edb598efe7c00fc0354a3b577bd16 = L.circleMarker(
+                [36.50685844696168, 127.20905905955792],
+                {"bubblingMouseEvents": true, "color": "#5C7CFA", "dashArray": null, "dashOffset": null, "fill": true, "fillColor": "#5C7CFA", "fillOpacity": 0.4, "fillRule": "evenodd", "lineCap": "round", "lineJoin": "round", "opacity": 1.0, "radius": 6.49567896167991, "stroke": true, "weight": 2}
+            ).addTo(feature_group_ca124d9f66c59890e9a90c0b4911b1ce);
+        
+    
+        var popup_725ab2b2e2ee133dd96feaadbe91db7c = L.popup({
+  "maxWidth": 300,
+});
+
+        
+            
+                var html_830855ab419b89a1255c451a1c9a076c = $(`<div id="html_830855ab419b89a1255c451a1c9a076c" style="width: 100.0%; height: 100.0%;">     <div style="font-family: 'Malgun Gothic', sans-serif; min-width: 250px;">         <h4 style="margin:0 0 10px 0; color: #5C7CFA;">📍 장군면</h4>         <table style="width: 100%; font-size: 12px;">             <tr><td><b>총 이용객</b></td><td><b>1,129,797명</b></td></tr>             <tr><td>승차</td><td>690,749명</td></tr>             <tr><td>하차</td><td>439,048명</td></tr>             <tr><td>환승</td><td>47,110명</td></tr>         </table>     </div>     </div>`)[0];
+                popup_725ab2b2e2ee133dd96feaadbe91db7c.setContent(html_830855ab419b89a1255c451a1c9a076c);
+            
+        
+
+        circle_marker_811edb598efe7c00fc0354a3b577bd16.bindPopup(popup_725ab2b2e2ee133dd96feaadbe91db7c)
+        ;
+
+        
+    
+    
+            circle_marker_811edb598efe7c00fc0354a3b577bd16.bindTooltip(
+                `<div>
+                     장군면: 1130K명
+                 </div>`,
+                {
+  "sticky": true,
+}
+            );
+        
+    
+            var circle_marker_0ae26301a6abf94be4d09e53ef657ac8 = L.circleMarker(
+                [36.65146674858409, 127.25289848721694],
+                {"bubblingMouseEvents": true, "color": "#5C7CFA", "dashArray": null, "dashOffset": null, "fill": true, "fillColor": "#5C7CFA", "fillOpacity": 0.4, "fillRule": "evenodd", "lineCap": "round", "lineJoin": "round", "opacity": 1.0, "radius": 5.563322274793679, "stroke": true, "weight": 2}
+            ).addTo(feature_group_ca124d9f66c59890e9a90c0b4911b1ce);
+        
+    
+        var popup_b656274dd7365afedb802b1a9c3d850a = L.popup({
+  "maxWidth": 300,
+});
+
+        
+            
+                var html_abe51a10afd56df28b1eb6b5aae64076 = $(`<div id="html_abe51a10afd56df28b1eb6b5aae64076" style="width: 100.0%; height: 100.0%;">     <div style="font-family: 'Malgun Gothic', sans-serif; min-width: 250px;">         <h4 style="margin:0 0 10px 0; color: #5C7CFA;">📍 전동면</h4>         <table style="width: 100%; font-size: 12px;">             <tr><td><b>총 이용객</b></td><td><b>425,519명</b></td></tr>             <tr><td>승차</td><td>237,121명</td></tr>             <tr><td>하차</td><td>188,398명</td></tr>             <tr><td>환승</td><td>7,656명</td></tr>         </table>     </div>     </div>`)[0];
+                popup_b656274dd7365afedb802b1a9c3d850a.setContent(html_abe51a10afd56df28b1eb6b5aae64076);
+            
+        
+
+        circle_marker_0ae26301a6abf94be4d09e53ef657ac8.bindPopup(popup_b656274dd7365afedb802b1a9c3d850a)
+        ;
+
+        
+    
+    
+            circle_marker_0ae26301a6abf94be4d09e53ef657ac8.bindTooltip(
+                `<div>
+                     전동면: 426K명
+                 </div>`,
+                {
+  "sticky": true,
+}
+            );
+        
+    
+            var circle_marker_922df7c74de8932f8fa4eb1d90862c32 = L.circleMarker(
+                [36.66927613835936, 127.1959945342758],
+                {"bubblingMouseEvents": true, "color": "#5C7CFA", "dashArray": null, "dashOffset": null, "fill": true, "fillColor": "#5C7CFA", "fillOpacity": 0.4, "fillRule": "evenodd", "lineCap": "round", "lineJoin": "round", "opacity": 1.0, "radius": 5.874276848289721, "stroke": true, "weight": 2}
+            ).addTo(feature_group_ca124d9f66c59890e9a90c0b4911b1ce);
+        
+    
+        var popup_bd77ca3ebeb8e72d0c72c5d4cf859d98 = L.popup({
+  "maxWidth": 300,
+});
+
+        
+            
+                var html_ae72b76b76f41d03374fe8bc568e5d7f = $(`<div id="html_ae72b76b76f41d03374fe8bc568e5d7f" style="width: 100.0%; height: 100.0%;">     <div style="font-family: 'Malgun Gothic', sans-serif; min-width: 250px;">         <h4 style="margin:0 0 10px 0; color: #5C7CFA;">📍 전의면</h4>         <table style="width: 100%; font-size: 12px;">             <tr><td><b>총 이용객</b></td><td><b>660,406명</b></td></tr>             <tr><td>승차</td><td>389,361명</td></tr>             <tr><td>하차</td><td>271,045명</td></tr>             <tr><td>환승</td><td>38,296명</td></tr>         </table>     </div>     </div>`)[0];
+                popup_bd77ca3ebeb8e72d0c72c5d4cf859d98.setContent(html_ae72b76b76f41d03374fe8bc568e5d7f);
+            
+        
+
+        circle_marker_922df7c74de8932f8fa4eb1d90862c32.bindPopup(popup_bd77ca3ebeb8e72d0c72c5d4cf859d98)
+        ;
+
+        
+    
+    
+            circle_marker_922df7c74de8932f8fa4eb1d90862c32.bindTooltip(
+                `<div>
+                     전의면: 660K명
+                 </div>`,
+                {
+  "sticky": true,
+}
+            );
+        
+    
+            var circle_marker_7c63424159d73959f7dbffe8397d69e1 = L.circleMarker(
+                [36.602257243148586, 127.2939429981908],
+                {"bubblingMouseEvents": true, "color": "#D64933", "dashArray": null, "dashOffset": null, "fill": true, "fillColor": "#D64933", "fillOpacity": 0.4, "fillRule": "evenodd", "lineCap": "round", "lineJoin": "round", "opacity": 1.0, "radius": 20.0, "stroke": true, "weight": 2}
+            ).addTo(feature_group_ca124d9f66c59890e9a90c0b4911b1ce);
+        
+    
+        var popup_f909e007aef5bf4c0c68ee1a67ab1149 = L.popup({
+  "maxWidth": 300,
+});
+
+        
+            
+                var html_b25808f2fc726b385d3575fd36ed58af = $(`<div id="html_b25808f2fc726b385d3575fd36ed58af" style="width: 100.0%; height: 100.0%;">     <div style="font-family: 'Malgun Gothic', sans-serif; min-width: 250px;">         <h4 style="margin:0 0 10px 0; color: #D64933;">📍 조치원읍</h4>         <table style="width: 100%; font-size: 12px;">             <tr><td><b>총 이용객</b></td><td><b>11,330,610명</b></td></tr>             <tr><td>승차</td><td>6,181,219명</td></tr>             <tr><td>하차</td><td>5,149,391명</td></tr>             <tr><td>환승</td><td>564,170명</td></tr>         </table>     </div>     </div>`)[0];
+                popup_f909e007aef5bf4c0c68ee1a67ab1149.setContent(html_b25808f2fc726b385d3575fd36ed58af);
+            
+        
+
+        circle_marker_7c63424159d73959f7dbffe8397d69e1.bindPopup(popup_f909e007aef5bf4c0c68ee1a67ab1149)
+        ;
+
+        
+    
+    
+            circle_marker_7c63424159d73959f7dbffe8397d69e1.bindTooltip(
+                `<div>
+                     조치원읍: 11331K명
+                 </div>`,
+                {
+  "sticky": true,
+}
+            );
+        
+    
+            var circle_marker_083916a3408c72e6ef0b2a896255ada1 = L.circleMarker(
+                [36.47189084842839, 127.27848773817264],
+                {"bubblingMouseEvents": true, "color": "#F4B41A", "dashArray": null, "dashOffset": null, "fill": true, "fillColor": "#F4B41A", "fillOpacity": 0.4, "fillRule": "evenodd", "lineCap": "round", "lineJoin": "round", "opacity": 1.0, "radius": 9.765551898794504, "stroke": true, "weight": 2}
+            ).addTo(feature_group_ca124d9f66c59890e9a90c0b4911b1ce);
+        
+    
+        var popup_a86bca080c02e4a75ed6c80711acc90a = L.popup({
+  "maxWidth": 300,
+});
+
+        
+            
+                var html_78834b32a34f1ee9953e91fa17ddf455 = $(`<div id="html_78834b32a34f1ee9953e91fa17ddf455" style="width: 100.0%; height: 100.0%;">     <div style="font-family: 'Malgun Gothic', sans-serif; min-width: 250px;">         <h4 style="margin:0 0 10px 0; color: #F4B41A;">📍 종촌동</h4>         <table style="width: 100%; font-size: 12px;">             <tr><td><b>총 이용객</b></td><td><b>3,599,774명</b></td></tr>             <tr><td>승차</td><td>1,863,460명</td></tr>             <tr><td>하차</td><td>1,736,314명</td></tr>             <tr><td>환승</td><td>129,972명</td></tr>         </table>     </div>     </div>`)[0];
+                popup_a86bca080c02e4a75ed6c80711acc90a.setContent(html_78834b32a34f1ee9953e91fa17ddf455);
+            
+        
+
+        circle_marker_083916a3408c72e6ef0b2a896255ada1.bindPopup(popup_a86bca080c02e4a75ed6c80711acc90a)
+        ;
+
+        
+    
+    
+            circle_marker_083916a3408c72e6ef0b2a896255ada1.bindTooltip(
+                `<div>
+                     종촌동: 3600K명
+                 </div>`,
+                {
+  "sticky": true,
+}
+            );
+        
+    
+            var circle_marker_9f1c8201d19168863c36b81173dedb36 = L.circleMarker(
+                [36.49615465532146, 127.31141319480736],
+                {"bubblingMouseEvents": true, "color": "#F4B41A", "dashArray": null, "dashOffset": null, "fill": true, "fillColor": "#F4B41A", "fillOpacity": 0.4, "fillRule": "evenodd", "lineCap": "round", "lineJoin": "round", "opacity": 1.0, "radius": 13.297619457381376, "stroke": true, "weight": 2}
+            ).addTo(feature_group_ca124d9f66c59890e9a90c0b4911b1ce);
+        
+    
+        var popup_ce60407d5af17400bb2cea710205f884 = L.popup({
+  "maxWidth": 300,
+});
+
+        
+            
+                var html_05d4222d071f91d0f25b202ca6033e3b = $(`<div id="html_05d4222d071f91d0f25b202ca6033e3b" style="width: 100.0%; height: 100.0%;">     <div style="font-family: 'Malgun Gothic', sans-serif; min-width: 250px;">         <h4 style="margin:0 0 10px 0; color: #F4B41A;">📍 한솔동</h4>         <table style="width: 100%; font-size: 12px;">             <tr><td><b>총 이용객</b></td><td><b>6,267,806명</b></td></tr>             <tr><td>승차</td><td>3,220,295명</td></tr>             <tr><td>하차</td><td>3,047,511명</td></tr>             <tr><td>환승</td><td>480,049명</td></tr>         </table>     </div>     </div>`)[0];
+                popup_ce60407d5af17400bb2cea710205f884.setContent(html_05d4222d071f91d0f25b202ca6033e3b);
+            
+        
+
+        circle_marker_9f1c8201d19168863c36b81173dedb36.bindPopup(popup_ce60407d5af17400bb2cea710205f884)
+        ;
+
+        
+    
+    
+            circle_marker_9f1c8201d19168863c36b81173dedb36.bindTooltip(
+                `<div>
+                     한솔동: 6268K명
+                 </div>`,
+                {
+  "sticky": true,
+}
+            );
+        
+    
+            feature_group_ca124d9f66c59890e9a90c0b4911b1ce.addTo(map_0cbee0656bb3bbebdb0122bbf95f89eb);
+        
+    
+            var feature_group_ce10ac1fcb78009ab729c310020f5756 = L.featureGroup(
+                {
+}
+            );
+        
+    
+            var marker_0ce488e35b87fcefe2826cfd909934bd = L.marker(
+                [36.48080822160226, 127.29561391817346],
+                {
+}
+            ).addTo(feature_group_ce10ac1fcb78009ab729c310020f5756);
+        
+    
+            var icon_c32d074f2bebcce5e2c0901fd290b3ba = L.AwesomeMarkers.icon(
+                {
+  "markerColor": "red",
+  "iconColor": "white",
+  "icon": "bus",
+  "prefix": "fa",
+  "extraClasses": "fa-rotate-0",
+}
+            );
+        
+    
+        var popup_ca9331318836a95e8ac21df8f0b17780 = L.popup({
+  "maxWidth": 350,
+});
+
+        
+            
+                var html_c3f19ccb341ce1c6afb1bca6c1d2ac40 = $(`<div id="html_c3f19ccb341ce1c6afb1bca6c1d2ac40" style="width: 100.0%; height: 100.0%;">         <div style="font-family: 'Malgun Gothic', sans-serif; min-width: 320px;">             <h3 style="margin:0 0 10px 0; color: #D64933; border-bottom: 2px solid #D64933; padding-bottom: 5px;">                 BRT B5             </h3>             <table style="width: 100%; font-size: 13px; line-height: 1.8;">                 <tr><td><b>기점지</b></td><td>세종고속시외버스터미널</td></tr>                 <tr><td><b>종점지</b></td><td>세종고속시외버스터미널</td></tr>                 <tr><td><b>경유지</b></td><td>고운동+아름동</td></tr>                 <tr><td>배차간격</td><td><b>18분</b></td></tr>                 <tr><td>운행횟수</td><td>54회/일</td></tr>                 <tr><td>커버 지역</td><td>2개</td></tr>                 <tr><td>추정 수요</td><td><b>9464K명</b></td></tr>                 <tr><td>배차 평가</td><td><b style="color: #D64933;">부족</b></td></tr>             </table>             <div style="margin-top: 10px; padding: 10px; background: #FFF3E0; border-radius: 5px; border-left: 4px solid #D64933;">                 <b>💡 최적화 제안:</b><br>                 <span style="font-size: 12px;">배차간격 18분 → 12분으로 소폭 단축 | 일 운행횟수 54회 → 100회 이상으로 증편</span>             </div>             <div style="margin-top: 8px; padding: 8px; background: #E3F2FD; border-radius: 5px; font-size: 11px;">                 <b>커버 지역:</b> 고운동, 아름동             </div>             <div style="margin-top: 5px; text-align: right; font-size: 11px; color: #666;">                 우선순위: 1위 / 점수: 0.70             </div>         </div>         </div>`)[0];
+                popup_ca9331318836a95e8ac21df8f0b17780.setContent(html_c3f19ccb341ce1c6afb1bca6c1d2ac40);
+            
+        
+
+        marker_0ce488e35b87fcefe2826cfd909934bd.bindPopup(popup_ca9331318836a95e8ac21df8f0b17780)
+        ;
+
+        
+    
+    
+            marker_0ce488e35b87fcefe2826cfd909934bd.bindTooltip(
+                `<div>
+                     <b>BRT B5</b> (최우선)
+                 </div>`,
+                {
+  "sticky": true,
+}
+            );
+        
+    
+                marker_0ce488e35b87fcefe2826cfd909934bd.setIcon(icon_c32d074f2bebcce5e2c0901fd290b3ba);
+            
+    
+            var marker_567404aae9c7ea95f33477a0aa6a2c2f = L.marker(
+                [36.501506551141574, 127.26023612718264],
+                {
+}
+            ).addTo(feature_group_ce10ac1fcb78009ab729c310020f5756);
+        
+    
+            var icon_11f4284008f8e35f5641cba12c828fd4 = L.AwesomeMarkers.icon(
+                {
+  "markerColor": "red",
+  "iconColor": "white",
+  "icon": "bus",
+  "prefix": "fa",
+  "extraClasses": "fa-rotate-0",
+}
+            );
+        
+    
+        var popup_57948baeffd00b6bb2307778e44815b8 = L.popup({
+  "maxWidth": 350,
+});
+
+        
+            
+                var html_4830520f02c52869347a6a6bec62e53a = $(`<div id="html_4830520f02c52869347a6a6bec62e53a" style="width: 100.0%; height: 100.0%;">         <div style="font-family: 'Malgun Gothic', sans-serif; min-width: 320px;">             <h3 style="margin:0 0 10px 0; color: #D64933; border-bottom: 2px solid #D64933; padding-bottom: 5px;">                 지선버스 53             </h3>             <table style="width: 100%; font-size: 13px; line-height: 1.8;">                 <tr><td><b>기점지</b></td><td>장군면사무소</td></tr>                 <tr><td><b>종점지</b></td><td>장군면사무소</td></tr>                 <tr><td><b>경유지</b></td><td>한솔동</td></tr>                 <tr><td>배차간격</td><td><b>30분</b></td></tr>                 <tr><td>운행횟수</td><td>0회/일</td></tr>                 <tr><td>커버 지역</td><td>2개</td></tr>                 <tr><td>추정 수요</td><td><b>7398K명</b></td></tr>                 <tr><td>배차 평가</td><td><b style="color: #D64933;">심각부족</b></td></tr>             </table>             <div style="margin-top: 10px; padding: 10px; background: #FFF3E0; border-radius: 5px; border-left: 4px solid #D64933;">                 <b>💡 최적화 제안:</b><br>                 <span style="font-size: 12px;">배차간격 30분 → 8-10분으로 단축 (고수요 노선) | 일 운행횟수 0회 → 100회 이상으로 증편</span>             </div>             <div style="margin-top: 8px; padding: 8px; background: #E3F2FD; border-radius: 5px; font-size: 11px;">                 <b>커버 지역:</b> 장군면, 한솔동             </div>             <div style="margin-top: 5px; text-align: right; font-size: 11px; color: #666;">                 우선순위: 2위 / 점수: 0.69             </div>         </div>         </div>`)[0];
+                popup_57948baeffd00b6bb2307778e44815b8.setContent(html_4830520f02c52869347a6a6bec62e53a);
+            
+        
+
+        marker_567404aae9c7ea95f33477a0aa6a2c2f.bindPopup(popup_57948baeffd00b6bb2307778e44815b8)
+        ;
+
+        
+    
+    
+            marker_567404aae9c7ea95f33477a0aa6a2c2f.bindTooltip(
+                `<div>
+                     <b>지선버스 53</b> (최우선)
+                 </div>`,
+                {
+  "sticky": true,
+}
+            );
+        
+    
+                marker_567404aae9c7ea95f33477a0aa6a2c2f.setIcon(icon_11f4284008f8e35f5641cba12c828fd4);
+            
+    
+            feature_group_ce10ac1fcb78009ab729c310020f5756.addTo(map_0cbee0656bb3bbebdb0122bbf95f89eb);
+        
+    
+            var feature_group_5f2db50a38b1536c7efc94bf4bfecfc2 = L.featureGroup(
+                {
+}
+            );
+        
+    
+            var marker_dbd1cc3a3e2e970556d5e7f40bff9f84 = L.marker(
+                [36.50359301869778, 127.2476285776662],
+                {
+}
+            ).addTo(feature_group_5f2db50a38b1536c7efc94bf4bfecfc2);
+        
+    
+            var icon_c0c8c7d45efb9d04c868a2fe7dcb1c4c = L.AwesomeMarkers.icon(
+                {
+  "markerColor": "orange",
+  "iconColor": "white",
+  "icon": "bus",
+  "prefix": "fa",
+  "extraClasses": "fa-rotate-0",
+}
+            );
+        
+    
+        var popup_f53eeb1c37c1036222b3062f73541458 = L.popup({
+  "maxWidth": 350,
+});
+
+        
+            
+                var html_1970b950350559498a73389d48ce59e0 = $(`<div id="html_1970b950350559498a73389d48ce59e0" style="width: 100.0%; height: 100.0%;">         <div style="font-family: 'Malgun Gothic', sans-serif; min-width: 320px;">             <h3 style="margin:0 0 10px 0; color: #F4B41A; border-bottom: 2px solid #F4B41A; padding-bottom: 5px;">                 지선버스 275             </h3>             <table style="width: 100%; font-size: 13px; line-height: 1.8;">                 <tr><td><b>기점지</b></td><td>누리동</td></tr>                 <tr><td><b>종점지</b></td><td>시립도서관</td></tr>                 <tr><td><b>경유지</b></td><td>나성동</td></tr>                 <tr><td>배차간격</td><td><b>24분</b></td></tr>                 <tr><td>운행횟수</td><td>44회/일</td></tr>                 <tr><td>커버 지역</td><td>1개</td></tr>                 <tr><td>추정 수요</td><td><b>3506K명</b></td></tr>                 <tr><td>배차 평가</td><td><b style="color: #F4B41A;">심각부족</b></td></tr>             </table>             <div style="margin-top: 10px; padding: 10px; background: #FFF3E0; border-radius: 5px; border-left: 4px solid #F4B41A;">                 <b>💡 최적화 제안:</b><br>                 <span style="font-size: 12px;">배차간격 24분 → 8-10분으로 단축 (고수요 노선) | 일 운행횟수 44회 → 100회 이상으로 증편 | 경유지 추가로 커버리지 확대 필요</span>             </div>             <div style="margin-top: 8px; padding: 8px; background: #E3F2FD; border-radius: 5px; font-size: 11px;">                 <b>커버 지역:</b> 나성동             </div>             <div style="margin-top: 5px; text-align: right; font-size: 11px; color: #666;">                 우선순위: 3위 / 점수: 0.49             </div>         </div>         </div>`)[0];
+                popup_f53eeb1c37c1036222b3062f73541458.setContent(html_1970b950350559498a73389d48ce59e0);
+            
+        
+
+        marker_dbd1cc3a3e2e970556d5e7f40bff9f84.bindPopup(popup_f53eeb1c37c1036222b3062f73541458)
+        ;
+
+        
+    
+    
+            marker_dbd1cc3a3e2e970556d5e7f40bff9f84.bindTooltip(
+                `<div>
+                     <b>지선버스 275</b> (필요)
+                 </div>`,
+                {
+  "sticky": true,
+}
+            );
+        
+    
+                marker_dbd1cc3a3e2e970556d5e7f40bff9f84.setIcon(icon_c0c8c7d45efb9d04c868a2fe7dcb1c4c);
+            
+    
+            var marker_86c5127476333a80fd41bc6884a4068e = L.marker(
+                [36.48383790989991, 127.30078536937935],
+                {
+}
+            ).addTo(feature_group_5f2db50a38b1536c7efc94bf4bfecfc2);
+        
+    
+            var icon_f938f868b6dabf7ee10483866edd59f4 = L.AwesomeMarkers.icon(
+                {
+  "markerColor": "orange",
+  "iconColor": "white",
+  "icon": "bus",
+  "prefix": "fa",
+  "extraClasses": "fa-rotate-0",
+}
+            );
+        
+    
+        var popup_518a81187dbc73b9081b4ecce0e00ef3 = L.popup({
+  "maxWidth": 350,
+});
+
+        
+            
+                var html_0365d8c9b1c68cd26b60104fe30821b9 = $(`<div id="html_0365d8c9b1c68cd26b60104fe30821b9" style="width: 100.0%; height: 100.0%;">         <div style="font-family: 'Malgun Gothic', sans-serif; min-width: 320px;">             <h3 style="margin:0 0 10px 0; color: #F4B41A; border-bottom: 2px solid #F4B41A; padding-bottom: 5px;">                 지선버스 201             </h3>             <table style="width: 100%; font-size: 13px; line-height: 1.8;">                 <tr><td><b>기점지</b></td><td>정부세종청사</td></tr>                 <tr><td><b>종점지</b></td><td>정부세종청사</td></tr>                 <tr><td><b>경유지</b></td><td>고운동커뮤니티센터</td></tr>                 <tr><td>배차간격</td><td><b>15분</b></td></tr>                 <tr><td>운행횟수</td><td>60회/일</td></tr>                 <tr><td>커버 지역</td><td>1개</td></tr>                 <tr><td>추정 수요</td><td><b>4307K명</b></td></tr>                 <tr><td>배차 평가</td><td><b style="color: #F4B41A;">부족</b></td></tr>             </table>             <div style="margin-top: 10px; padding: 10px; background: #FFF3E0; border-radius: 5px; border-left: 4px solid #F4B41A;">                 <b>💡 최적화 제안:</b><br>                 <span style="font-size: 12px;">배차간격 15분 → 12분으로 소폭 단축 | 일 운행횟수 60회 → 100회 이상으로 증편 | 경유지 추가로 커버리지 확대 필요</span>             </div>             <div style="margin-top: 8px; padding: 8px; background: #E3F2FD; border-radius: 5px; font-size: 11px;">                 <b>커버 지역:</b> 고운동             </div>             <div style="margin-top: 5px; text-align: right; font-size: 11px; color: #666;">                 우선순위: 4위 / 점수: 0.43             </div>         </div>         </div>`)[0];
+                popup_518a81187dbc73b9081b4ecce0e00ef3.setContent(html_0365d8c9b1c68cd26b60104fe30821b9);
+            
+        
+
+        marker_86c5127476333a80fd41bc6884a4068e.bindPopup(popup_518a81187dbc73b9081b4ecce0e00ef3)
+        ;
+
+        
+    
+    
+            marker_86c5127476333a80fd41bc6884a4068e.bindTooltip(
+                `<div>
+                     <b>지선버스 201</b> (필요)
+                 </div>`,
+                {
+  "sticky": true,
+}
+            );
+        
+    
+                marker_86c5127476333a80fd41bc6884a4068e.setIcon(icon_f938f868b6dabf7ee10483866edd59f4);
+            
+    
+            var marker_853caffeebaa066efd093320473db30a = L.marker(
+                [36.50685844696168, 127.20905905955792],
+                {
+}
+            ).addTo(feature_group_5f2db50a38b1536c7efc94bf4bfecfc2);
+        
+    
+            var icon_c0f803fac3ee9b536173d46c28942362 = L.AwesomeMarkers.icon(
+                {
+  "markerColor": "orange",
+  "iconColor": "white",
+  "icon": "bus",
+  "prefix": "fa",
+  "extraClasses": "fa-rotate-0",
+}
+            );
+        
+    
+        var popup_b3a0b77edadf13aa06a463b025a6cba8 = L.popup({
+  "maxWidth": 350,
+});
+
+        
+            
+                var html_63526b3c7f65e8790a5866b28d43793f = $(`<div id="html_63526b3c7f65e8790a5866b28d43793f" style="width: 100.0%; height: 100.0%;">         <div style="font-family: 'Malgun Gothic', sans-serif; min-width: 320px;">             <h3 style="margin:0 0 10px 0; color: #F4B41A; border-bottom: 2px solid #F4B41A; padding-bottom: 5px;">                 지선버스 52             </h3>             <table style="width: 100%; font-size: 13px; line-height: 1.8;">                 <tr><td><b>기점지</b></td><td>장군면사무소</td></tr>                 <tr><td><b>종점지</b></td><td>장군면사무소</td></tr>                 <tr><td><b>경유지</b></td><td>공정거래위원회</td></tr>                 <tr><td>배차간격</td><td><b>30분</b></td></tr>                 <tr><td>운행횟수</td><td>0회/일</td></tr>                 <tr><td>커버 지역</td><td>1개</td></tr>                 <tr><td>추정 수요</td><td><b>1130K명</b></td></tr>                 <tr><td>배차 평가</td><td><b style="color: #F4B41A;">심각부족</b></td></tr>             </table>             <div style="margin-top: 10px; padding: 10px; background: #FFF3E0; border-radius: 5px; border-left: 4px solid #F4B41A;">                 <b>💡 최적화 제안:</b><br>                 <span style="font-size: 12px;">배차간격 30분 → 8-10분으로 단축 (고수요 노선) | 일 운행횟수 0회 → 100회 이상으로 증편 | 경유지 추가로 커버리지 확대 필요</span>             </div>             <div style="margin-top: 8px; padding: 8px; background: #E3F2FD; border-radius: 5px; font-size: 11px;">                 <b>커버 지역:</b> 장군면             </div>             <div style="margin-top: 5px; text-align: right; font-size: 11px; color: #666;">                 우선순위: 5위 / 점수: 0.36             </div>         </div>         </div>`)[0];
+                popup_b3a0b77edadf13aa06a463b025a6cba8.setContent(html_63526b3c7f65e8790a5866b28d43793f);
+            
+        
+
+        marker_853caffeebaa066efd093320473db30a.bindPopup(popup_b3a0b77edadf13aa06a463b025a6cba8)
+        ;
+
+        
+    
+    
+            marker_853caffeebaa066efd093320473db30a.bindTooltip(
+                `<div>
+                     <b>지선버스 52</b> (필요)
+                 </div>`,
+                {
+  "sticky": true,
+}
+            );
+        
+    
+                marker_853caffeebaa066efd093320473db30a.setIcon(icon_c0f803fac3ee9b536173d46c28942362);
+            
+    
+            var marker_0598db38902fa53ad8b03969a4a1968b = L.marker(
+                [36.51580295414939, 127.2489455788452],
+                {
+}
+            ).addTo(feature_group_5f2db50a38b1536c7efc94bf4bfecfc2);
+        
+    
+            var icon_7bb994c549fa6a26fd9d16fb1d00712f = L.AwesomeMarkers.icon(
+                {
+  "markerColor": "orange",
+  "iconColor": "white",
+  "icon": "bus",
+  "prefix": "fa",
+  "extraClasses": "fa-rotate-0",
+}
+            );
+        
+    
+        var popup_264e5196d905d4ba4d63bc902ac2e23b = L.popup({
+  "maxWidth": 350,
+});
+
+        
+            
+                var html_d2087f72f704ee8f50b70fbdab66742f = $(`<div id="html_d2087f72f704ee8f50b70fbdab66742f" style="width: 100.0%; height: 100.0%;">         <div style="font-family: 'Malgun Gothic', sans-serif; min-width: 320px;">             <h3 style="margin:0 0 10px 0; color: #F4B41A; border-bottom: 2px solid #F4B41A; padding-bottom: 5px;">                 광역버스 1003             </h3>             <table style="width: 100%; font-size: 13px; line-height: 1.8;">                 <tr><td><b>기점지</b></td><td>반석역</td></tr>                 <tr><td><b>종점지</b></td><td>오송2지구</td></tr>                 <tr><td><b>경유지</b></td><td>다정동</td></tr>                 <tr><td>배차간격</td><td><b>15분</b></td></tr>                 <tr><td>운행횟수</td><td>64회/일</td></tr>                 <tr><td>커버 지역</td><td>1개</td></tr>                 <tr><td>추정 수요</td><td><b>1047K명</b></td></tr>                 <tr><td>배차 평가</td><td><b style="color: #F4B41A;">부족</b></td></tr>             </table>             <div style="margin-top: 10px; padding: 10px; background: #FFF3E0; border-radius: 5px; border-left: 4px solid #F4B41A;">                 <b>💡 최적화 제안:</b><br>                 <span style="font-size: 12px;">배차간격 15분 → 12분으로 소폭 단축 | 일 운행횟수 64회 → 100회 이상으로 증편 | 경유지 추가로 커버리지 확대 필요</span>             </div>             <div style="margin-top: 8px; padding: 8px; background: #E3F2FD; border-radius: 5px; font-size: 11px;">                 <b>커버 지역:</b> 다정동             </div>             <div style="margin-top: 5px; text-align: right; font-size: 11px; color: #666;">                 우선순위: 6위 / 점수: 0.26             </div>         </div>         </div>`)[0];
+                popup_264e5196d905d4ba4d63bc902ac2e23b.setContent(html_d2087f72f704ee8f50b70fbdab66742f);
+            
+        
+
+        marker_0598db38902fa53ad8b03969a4a1968b.bindPopup(popup_264e5196d905d4ba4d63bc902ac2e23b)
+        ;
+
+        
+    
+    
+            marker_0598db38902fa53ad8b03969a4a1968b.bindTooltip(
+                `<div>
+                     <b>광역버스 1003</b> (필요)
+                 </div>`,
+                {
+  "sticky": true,
+}
+            );
+        
+    
+                marker_0598db38902fa53ad8b03969a4a1968b.setIcon(icon_7bb994c549fa6a26fd9d16fb1d00712f);
+            
+    
+            var marker_45459903ed6979ae5c24497da9b09dc0 = L.marker(
+                [36.51580295414939, 127.2489455788452],
+                {
+}
+            ).addTo(feature_group_5f2db50a38b1536c7efc94bf4bfecfc2);
+        
+    
+            var icon_9c0fe9d8958c4495b0708e6b2944d5ba = L.AwesomeMarkers.icon(
+                {
+  "markerColor": "orange",
+  "iconColor": "white",
+  "icon": "bus",
+  "prefix": "fa",
+  "extraClasses": "fa-rotate-0",
+}
+            );
+        
+    
+        var popup_7dd356df4d375b33cabcf84dbb997ad3 = L.popup({
+  "maxWidth": 350,
+});
+
+        
+            
+                var html_c73814060811024bf94e277f0e85c4ad = $(`<div id="html_c73814060811024bf94e277f0e85c4ad" style="width: 100.0%; height: 100.0%;">         <div style="font-family: 'Malgun Gothic', sans-serif; min-width: 320px;">             <h3 style="margin:0 0 10px 0; color: #F4B41A; border-bottom: 2px solid #F4B41A; padding-bottom: 5px;">                 광역버스 1005             </h3>             <table style="width: 100%; font-size: 13px; line-height: 1.8;">                 <tr><td><b>기점지</b></td><td>은하수공원</td></tr>                 <tr><td><b>종점지</b></td><td>오송역</td></tr>                 <tr><td><b>경유지</b></td><td>다정동커뮤니티센터</td></tr>                 <tr><td>배차간격</td><td><b>18분</b></td></tr>                 <tr><td>운행횟수</td><td>56회/일</td></tr>                 <tr><td>커버 지역</td><td>1개</td></tr>                 <tr><td>추정 수요</td><td><b>1047K명</b></td></tr>                 <tr><td>배차 평가</td><td><b style="color: #F4B41A;">부족</b></td></tr>             </table>             <div style="margin-top: 10px; padding: 10px; background: #FFF3E0; border-radius: 5px; border-left: 4px solid #F4B41A;">                 <b>💡 최적화 제안:</b><br>                 <span style="font-size: 12px;">배차간격 18분 → 12분으로 소폭 단축 | 일 운행횟수 56회 → 100회 이상으로 증편 | 경유지 추가로 커버리지 확대 필요</span>             </div>             <div style="margin-top: 8px; padding: 8px; background: #E3F2FD; border-radius: 5px; font-size: 11px;">                 <b>커버 지역:</b> 다정동             </div>             <div style="margin-top: 5px; text-align: right; font-size: 11px; color: #666;">                 우선순위: 7위 / 점수: 0.26             </div>         </div>         </div>`)[0];
+                popup_7dd356df4d375b33cabcf84dbb997ad3.setContent(html_c73814060811024bf94e277f0e85c4ad);
+            
+        
+
+        marker_45459903ed6979ae5c24497da9b09dc0.bindPopup(popup_7dd356df4d375b33cabcf84dbb997ad3)
+        ;
+
+        
+    
+    
+            marker_45459903ed6979ae5c24497da9b09dc0.bindTooltip(
+                `<div>
+                     <b>광역버스 1005</b> (필요)
+                 </div>`,
+                {
+  "sticky": true,
+}
+            );
+        
+    
+                marker_45459903ed6979ae5c24497da9b09dc0.setIcon(icon_9c0fe9d8958c4495b0708e6b2944d5ba);
+            
+    
+            var marker_8be68d353b6b6626cce870d70672bb8e = L.marker(
+                [36.51580295414939, 127.2489455788452],
+                {
+}
+            ).addTo(feature_group_5f2db50a38b1536c7efc94bf4bfecfc2);
+        
+    
+            var icon_5da80448a2af7d2fbb39dbd513f9cf98 = L.AwesomeMarkers.icon(
+                {
+  "markerColor": "orange",
+  "iconColor": "white",
+  "icon": "bus",
+  "prefix": "fa",
+  "extraClasses": "fa-rotate-0",
+}
+            );
+        
+    
+        var popup_333d7321bcbcff859518e396fe3f3c04 = L.popup({
+  "maxWidth": 350,
+});
+
+        
+            
+                var html_9e13ee891ba6c2352db4dd9410b11246 = $(`<div id="html_9e13ee891ba6c2352db4dd9410b11246" style="width: 100.0%; height: 100.0%;">         <div style="font-family: 'Malgun Gothic', sans-serif; min-width: 320px;">             <h3 style="margin:0 0 10px 0; color: #F4B41A; border-bottom: 2px solid #F4B41A; padding-bottom: 5px;">                 지선버스 204             </h3>             <table style="width: 100%; font-size: 13px; line-height: 1.8;">                 <tr><td><b>기점지</b></td><td>충남대병원세종의원</td></tr>                 <tr><td><b>종점지</b></td><td>충남대병원세종의원</td></tr>                 <tr><td><b>경유지</b></td><td>다정동커뮤니티센터</td></tr>                 <tr><td>배차간격</td><td><b>15분</b></td></tr>                 <tr><td>운행횟수</td><td>61회/일</td></tr>                 <tr><td>커버 지역</td><td>1개</td></tr>                 <tr><td>추정 수요</td><td><b>1047K명</b></td></tr>                 <tr><td>배차 평가</td><td><b style="color: #F4B41A;">부족</b></td></tr>             </table>             <div style="margin-top: 10px; padding: 10px; background: #FFF3E0; border-radius: 5px; border-left: 4px solid #F4B41A;">                 <b>💡 최적화 제안:</b><br>                 <span style="font-size: 12px;">배차간격 15분 → 12분으로 소폭 단축 | 일 운행횟수 61회 → 100회 이상으로 증편 | 경유지 추가로 커버리지 확대 필요</span>             </div>             <div style="margin-top: 8px; padding: 8px; background: #E3F2FD; border-radius: 5px; font-size: 11px;">                 <b>커버 지역:</b> 다정동             </div>             <div style="margin-top: 5px; text-align: right; font-size: 11px; color: #666;">                 우선순위: 8위 / 점수: 0.26             </div>         </div>         </div>`)[0];
+                popup_333d7321bcbcff859518e396fe3f3c04.setContent(html_9e13ee891ba6c2352db4dd9410b11246);
+            
+        
+
+        marker_8be68d353b6b6626cce870d70672bb8e.bindPopup(popup_333d7321bcbcff859518e396fe3f3c04)
+        ;
+
+        
+    
+    
+            marker_8be68d353b6b6626cce870d70672bb8e.bindTooltip(
+                `<div>
+                     <b>지선버스 204</b> (필요)
+                 </div>`,
+                {
+  "sticky": true,
+}
+            );
+        
+    
+                marker_8be68d353b6b6626cce870d70672bb8e.setIcon(icon_5da80448a2af7d2fbb39dbd513f9cf98);
+            
+    
+            var marker_d57b99d400d68b2c838757297bdf8795 = L.marker(
+                [36.51580295414939, 127.2489455788452],
+                {
+}
+            ).addTo(feature_group_5f2db50a38b1536c7efc94bf4bfecfc2);
+        
+    
+            var icon_58860f3466bd822f1d54ac95e0229a29 = L.AwesomeMarkers.icon(
+                {
+  "markerColor": "orange",
+  "iconColor": "white",
+  "icon": "bus",
+  "prefix": "fa",
+  "extraClasses": "fa-rotate-0",
+}
+            );
+        
+    
+        var popup_674e7906df88f81a48a6544891ebfab1 = L.popup({
+  "maxWidth": 350,
+});
+
+        
+            
+                var html_186031ee26f01856b379b8df4b9af99d = $(`<div id="html_186031ee26f01856b379b8df4b9af99d" style="width: 100.0%; height: 100.0%;">         <div style="font-family: 'Malgun Gothic', sans-serif; min-width: 320px;">             <h3 style="margin:0 0 10px 0; color: #F4B41A; border-bottom: 2px solid #F4B41A; padding-bottom: 5px;">                 광역버스 1004             </h3>             <table style="width: 100%; font-size: 13px; line-height: 1.8;">                 <tr><td><b>기점지</b></td><td>장기중학교</td></tr>                 <tr><td><b>종점지</b></td><td>반석역</td></tr>                 <tr><td><b>경유지</b></td><td>다정동커뮤니티센터</td></tr>                 <tr><td>배차간격</td><td><b>16분</b></td></tr>                 <tr><td>운행횟수</td><td>62회/일</td></tr>                 <tr><td>커버 지역</td><td>1개</td></tr>                 <tr><td>추정 수요</td><td><b>1047K명</b></td></tr>                 <tr><td>배차 평가</td><td><b style="color: #F4B41A;">부족</b></td></tr>             </table>             <div style="margin-top: 10px; padding: 10px; background: #FFF3E0; border-radius: 5px; border-left: 4px solid #F4B41A;">                 <b>💡 최적화 제안:</b><br>                 <span style="font-size: 12px;">배차간격 16분 → 12분으로 소폭 단축 | 일 운행횟수 62회 → 100회 이상으로 증편 | 경유지 추가로 커버리지 확대 필요</span>             </div>             <div style="margin-top: 8px; padding: 8px; background: #E3F2FD; border-radius: 5px; font-size: 11px;">                 <b>커버 지역:</b> 다정동             </div>             <div style="margin-top: 5px; text-align: right; font-size: 11px; color: #666;">                 우선순위: 9위 / 점수: 0.26             </div>         </div>         </div>`)[0];
+                popup_674e7906df88f81a48a6544891ebfab1.setContent(html_186031ee26f01856b379b8df4b9af99d);
+            
+        
+
+        marker_d57b99d400d68b2c838757297bdf8795.bindPopup(popup_674e7906df88f81a48a6544891ebfab1)
+        ;
+
+        
+    
+    
+            marker_d57b99d400d68b2c838757297bdf8795.bindTooltip(
+                `<div>
+                     <b>광역버스 1004</b> (필요)
+                 </div>`,
+                {
+  "sticky": true,
+}
+            );
+        
+    
+                marker_d57b99d400d68b2c838757297bdf8795.setIcon(icon_58860f3466bd822f1d54ac95e0229a29);
+            
+    
+            var marker_67c34702e8b66c066e8e34159e10cd10 = L.marker(
+                [36.66927613835936, 127.1959945342758],
+                {
+}
+            ).addTo(feature_group_5f2db50a38b1536c7efc94bf4bfecfc2);
+        
+    
+            var icon_75436429ffcc2b349027229936feafb3 = L.AwesomeMarkers.icon(
+                {
+  "markerColor": "orange",
+  "iconColor": "white",
+  "icon": "bus",
+  "prefix": "fa",
+  "extraClasses": "fa-rotate-0",
+}
+            );
+        
+    
+        var popup_8ad291ab0eb8b7fbb8f2ca324767ce9d = L.popup({
+  "maxWidth": 350,
+});
+
+        
+            
+                var html_3db65b92427cc9178d7a9cb6912d4722 = $(`<div id="html_3db65b92427cc9178d7a9cb6912d4722" style="width: 100.0%; height: 100.0%;">         <div style="font-family: 'Malgun Gothic', sans-serif; min-width: 320px;">             <h3 style="margin:0 0 10px 0; color: #F4B41A; border-bottom: 2px solid #F4B41A; padding-bottom: 5px;">                 간선버스 801             </h3>             <table style="width: 100%; font-size: 13px; line-height: 1.8;">                 <tr><td><b>기점지</b></td><td>문화체육관광부</td></tr>                 <tr><td><b>종점지</b></td><td>민석아파트</td></tr>                 <tr><td><b>경유지</b></td><td>전의면사무소</td></tr>                 <tr><td>배차간격</td><td><b>20분</b></td></tr>                 <tr><td>운행횟수</td><td>53회/일</td></tr>                 <tr><td>커버 지역</td><td>1개</td></tr>                 <tr><td>추정 수요</td><td><b>660K명</b></td></tr>                 <tr><td>배차 평가</td><td><b style="color: #F4B41A;">부족</b></td></tr>             </table>             <div style="margin-top: 10px; padding: 10px; background: #FFF3E0; border-radius: 5px; border-left: 4px solid #F4B41A;">                 <b>💡 최적화 제안:</b><br>                 <span style="font-size: 12px;">배차간격 20분 → 12분으로 소폭 단축 | 일 운행횟수 53회 → 100회 이상으로 증편 | 경유지 추가로 커버리지 확대 필요</span>             </div>             <div style="margin-top: 8px; padding: 8px; background: #E3F2FD; border-radius: 5px; font-size: 11px;">                 <b>커버 지역:</b> 전의면             </div>             <div style="margin-top: 5px; text-align: right; font-size: 11px; color: #666;">                 우선순위: 10위 / 점수: 0.23             </div>         </div>         </div>`)[0];
+                popup_8ad291ab0eb8b7fbb8f2ca324767ce9d.setContent(html_3db65b92427cc9178d7a9cb6912d4722);
+            
+        
+
+        marker_67c34702e8b66c066e8e34159e10cd10.bindPopup(popup_8ad291ab0eb8b7fbb8f2ca324767ce9d)
+        ;
+
+        
+    
+    
+            marker_67c34702e8b66c066e8e34159e10cd10.bindTooltip(
+                `<div>
+                     <b>간선버스 801</b> (필요)
+                 </div>`,
+                {
+  "sticky": true,
+}
+            );
+        
+    
+                marker_67c34702e8b66c066e8e34159e10cd10.setIcon(icon_75436429ffcc2b349027229936feafb3);
+            
+    
+            feature_group_5f2db50a38b1536c7efc94bf4bfecfc2.addTo(map_0cbee0656bb3bbebdb0122bbf95f89eb);
+        
+    
+            var feature_group_0c243bf7406800c5d2c1317bcd3ab8ef = L.featureGroup(
+                {
+}
+            );
+        
+    
+            var marker_9ab44e7c64c750b1dd8efe0e32c4d826 = L.marker(
+                [36.50685844696168, 127.20905905955792],
+                {
+}
+            ).addTo(feature_group_0c243bf7406800c5d2c1317bcd3ab8ef);
+        
+    
+            var icon_f38e6dc8cec85000df0cb4c968eed597 = L.AwesomeMarkers.icon(
+                {
+  "markerColor": "green",
+  "iconColor": "white",
+  "icon": "bus",
+  "prefix": "fa",
+  "extraClasses": "fa-rotate-0",
+}
+            );
+        
+    
+        var popup_6f13306bd3b2ba9fb0f13d8b6a31fa0c = L.popup({
+  "maxWidth": 350,
+});
+
+        
+            
+                var html_b3886e3a68c3e9dd3b477412ad476d7d = $(`<div id="html_b3886e3a68c3e9dd3b477412ad476d7d" style="width: 100.0%; height: 100.0%;">         <div style="font-family: 'Malgun Gothic', sans-serif; min-width: 320px;">             <h3 style="margin:0 0 10px 0; color: #06A77D; border-bottom: 2px solid #06A77D; padding-bottom: 5px;">                 마을버스 75             </h3>             <table style="width: 100%; font-size: 13px; line-height: 1.8;">                 <tr><td><b>기점지</b></td><td>조치원터미널</td></tr>                 <tr><td><b>종점지</b></td><td>장군면</td></tr>                 <tr><td><b>경유지</b></td><td>용암2리</td></tr>                 <tr><td>배차간격</td><td><b>nan분</b></td></tr>                 <tr><td>운행횟수</td><td>8회/일</td></tr>                 <tr><td>커버 지역</td><td>1개</td></tr>                 <tr><td>추정 수요</td><td><b>1130K명</b></td></tr>                 <tr><td>배차 평가</td><td><b style="color: #06A77D;">정보없음</b></td></tr>             </table>             <div style="margin-top: 10px; padding: 10px; background: #FFF3E0; border-radius: 5px; border-left: 4px solid #06A77D;">                 <b>💡 최적화 제안:</b><br>                 <span style="font-size: 12px;">일 운행횟수 8회 → 100회 이상으로 증편 | 경유지 추가로 커버리지 확대 필요</span>             </div>             <div style="margin-top: 8px; padding: 8px; background: #E3F2FD; border-radius: 5px; font-size: 11px;">                 <b>커버 지역:</b> 장군면             </div>             <div style="margin-top: 5px; text-align: right; font-size: 11px; color: #666;">                 우선순위: 16위 / 점수: 0.06             </div>         </div>         </div>`)[0];
+                popup_6f13306bd3b2ba9fb0f13d8b6a31fa0c.setContent(html_b3886e3a68c3e9dd3b477412ad476d7d);
+            
+        
+
+        marker_9ab44e7c64c750b1dd8efe0e32c4d826.bindPopup(popup_6f13306bd3b2ba9fb0f13d8b6a31fa0c)
+        ;
+
+        
+    
+    
+            marker_9ab44e7c64c750b1dd8efe0e32c4d826.bindTooltip(
+                `<div>
+                     <b>마을버스 75</b> (양호)
+                 </div>`,
+                {
+  "sticky": true,
+}
+            );
+        
+    
+                marker_9ab44e7c64c750b1dd8efe0e32c4d826.setIcon(icon_f38e6dc8cec85000df0cb4c968eed597);
+            
+    
+            var marker_ee808c0bf7bbf44d3131951e526d2eae = L.marker(
+                [36.57723225156481, 127.25591941732252],
+                {
+}
+            ).addTo(feature_group_0c243bf7406800c5d2c1317bcd3ab8ef);
+        
+    
+            var icon_67c4759f5bcf672371cab8a338b9fcc0 = L.AwesomeMarkers.icon(
+                {
+  "markerColor": "green",
+  "iconColor": "white",
+  "icon": "bus",
+  "prefix": "fa",
+  "extraClasses": "fa-rotate-0",
+}
+            );
+        
+    
+        var popup_52db020fb96d752c027ae5a3f2ffba1d = L.popup({
+  "maxWidth": 350,
+});
+
+        
+            
+                var html_78e25abeaf4210941ce7096f04c26e39 = $(`<div id="html_78e25abeaf4210941ce7096f04c26e39" style="width: 100.0%; height: 100.0%;">         <div style="font-family: 'Malgun Gothic', sans-serif; min-width: 320px;">             <h3 style="margin:0 0 10px 0; color: #06A77D; border-bottom: 2px solid #06A77D; padding-bottom: 5px;">                 마을버스 71             </h3>             <table style="width: 100%; font-size: 13px; line-height: 1.8;">                 <tr><td><b>기점지</b></td><td>조치원터미널</td></tr>                 <tr><td><b>종점지</b></td><td>청라리</td></tr>                 <tr><td><b>경유지</b></td><td>연서면</td></tr>                 <tr><td>배차간격</td><td><b>nan분</b></td></tr>                 <tr><td>운행횟수</td><td>8회/일</td></tr>                 <tr><td>커버 지역</td><td>1개</td></tr>                 <tr><td>추정 수요</td><td><b>936K명</b></td></tr>                 <tr><td>배차 평가</td><td><b style="color: #06A77D;">정보없음</b></td></tr>             </table>             <div style="margin-top: 10px; padding: 10px; background: #FFF3E0; border-radius: 5px; border-left: 4px solid #06A77D;">                 <b>💡 최적화 제안:</b><br>                 <span style="font-size: 12px;">일 운행횟수 8회 → 100회 이상으로 증편 | 경유지 추가로 커버리지 확대 필요</span>             </div>             <div style="margin-top: 8px; padding: 8px; background: #E3F2FD; border-radius: 5px; font-size: 11px;">                 <b>커버 지역:</b> 연서면             </div>             <div style="margin-top: 5px; text-align: right; font-size: 11px; color: #666;">                 우선순위: 17위 / 점수: 0.05             </div>         </div>         </div>`)[0];
+                popup_52db020fb96d752c027ae5a3f2ffba1d.setContent(html_78e25abeaf4210941ce7096f04c26e39);
+            
+        
+
+        marker_ee808c0bf7bbf44d3131951e526d2eae.bindPopup(popup_52db020fb96d752c027ae5a3f2ffba1d)
+        ;
+
+        
+    
+    
+            marker_ee808c0bf7bbf44d3131951e526d2eae.bindTooltip(
+                `<div>
+                     <b>마을버스 71</b> (양호)
+                 </div>`,
+                {
+  "sticky": true,
+}
+            );
+        
+    
+                marker_ee808c0bf7bbf44d3131951e526d2eae.setIcon(icon_67c4759f5bcf672371cab8a338b9fcc0);
+            
+    
+            var marker_c1c36755649766cfe5df4c194152ef68 = L.marker(
+                [36.52446511075059, 127.37443103930968],
+                {
+}
+            ).addTo(feature_group_0c243bf7406800c5d2c1317bcd3ab8ef);
+        
+    
+            var icon_a6b3c43d7830efc3d348d736e70372f6 = L.AwesomeMarkers.icon(
+                {
+  "markerColor": "green",
+  "iconColor": "white",
+  "icon": "bus",
+  "prefix": "fa",
+  "extraClasses": "fa-rotate-0",
+}
+            );
+        
+    
+        var popup_5bb4ca4a037c1128b3e6ebaa3091d247 = L.popup({
+  "maxWidth": 350,
+});
+
+        
+            
+                var html_d04e74fb973c2008f5515792b8387adc = $(`<div id="html_d04e74fb973c2008f5515792b8387adc" style="width: 100.0%; height: 100.0%;">         <div style="font-family: 'Malgun Gothic', sans-serif; min-width: 320px;">             <h3 style="margin:0 0 10px 0; color: #06A77D; border-bottom: 2px solid #06A77D; padding-bottom: 5px;">                 마을버스 35             </h3>             <table style="width: 100%; font-size: 13px; line-height: 1.8;">                 <tr><td><b>기점지</b></td><td>부강면</td></tr>                 <tr><td><b>종점지</b></td><td>금호리</td></tr>                 <tr><td><b>경유지</b></td><td>부강산업단지</td></tr>                 <tr><td>배차간격</td><td><b>nan분</b></td></tr>                 <tr><td>운행횟수</td><td>11회/일</td></tr>                 <tr><td>커버 지역</td><td>1개</td></tr>                 <tr><td>추정 수요</td><td><b>426K명</b></td></tr>                 <tr><td>배차 평가</td><td><b style="color: #06A77D;">정보없음</b></td></tr>             </table>             <div style="margin-top: 10px; padding: 10px; background: #FFF3E0; border-radius: 5px; border-left: 4px solid #06A77D;">                 <b>💡 최적화 제안:</b><br>                 <span style="font-size: 12px;">일 운행횟수 11회 → 80회로 증편 | 경유지 추가로 커버리지 확대 필요</span>             </div>             <div style="margin-top: 8px; padding: 8px; background: #E3F2FD; border-radius: 5px; font-size: 11px;">                 <b>커버 지역:</b> 부강면             </div>             <div style="margin-top: 5px; text-align: right; font-size: 11px; color: #666;">                 우선순위: 18위 / 점수: 0.02             </div>         </div>         </div>`)[0];
+                popup_5bb4ca4a037c1128b3e6ebaa3091d247.setContent(html_d04e74fb973c2008f5515792b8387adc);
+            
+        
+
+        marker_c1c36755649766cfe5df4c194152ef68.bindPopup(popup_5bb4ca4a037c1128b3e6ebaa3091d247)
+        ;
+
+        
+    
+    
+            marker_c1c36755649766cfe5df4c194152ef68.bindTooltip(
+                `<div>
+                     <b>마을버스 35</b> (양호)
+                 </div>`,
+                {
+  "sticky": true,
+}
+            );
+        
+    
+                marker_c1c36755649766cfe5df4c194152ef68.setIcon(icon_a6b3c43d7830efc3d348d736e70372f6);
+            
+    
+            feature_group_0c243bf7406800c5d2c1317bcd3ab8ef.addTo(map_0cbee0656bb3bbebdb0122bbf95f89eb);
+        
+    
+            var tile_layer_6ae4650b8deb3d80caccaa1baf45f8fa = L.tileLayer(
+                "https://tile.openstreetmap.org/{z}/{x}/{y}.png",
+                {"attribution": "\u0026copy; \u003ca href=\"https://www.openstreetmap.org/copyright\"\u003eOpenStreetMap\u003c/a\u003e contributors", "detect_retina": false, "max_native_zoom": 19, "max_zoom": 19, "min_zoom": 0, "no_wrap": false, "opacity": 1, "subdomains": "abc", "tms": false}
+            );
+            var mini_map_64dd4c85801de75f2267661fbfdd97c0 = new L.Control.MiniMap(
+                tile_layer_6ae4650b8deb3d80caccaa1baf45f8fa,
+                {
+  "position": "bottomright",
+  "width": 150,
+  "height": 150,
+  "collapsedWidth": 25,
+  "collapsedHeight": 25,
+  "zoomLevelOffset": -5,
+  "centerFixed": false,
+  "zoomAnimation": false,
+  "toggleDisplay": true,
+  "autoToggleDisplay": false,
+  "minimized": false,
+}
+            );
+            map_0cbee0656bb3bbebdb0122bbf95f89eb.addControl(mini_map_64dd4c85801de75f2267661fbfdd97c0);
+        
+    
+            L.control.fullscreen(
+                {
+  "position": "topright",
+  "title": "\uc804\uccb4\ud654\uba74",
+  "titleCancel": "\uc804\uccb4\ud654\uba74 \ud574\uc81c",
+  "forceSeparateButton": false,
+}
+            ).addTo(map_0cbee0656bb3bbebdb0122bbf95f89eb);
+        
+    
+            var layer_control_334c4581a5df4e7011c45e9de0fdbec3_layers = {
+                base_layers : {
+                    "cartodbpositron" : tile_layer_d416c27e064282fe5f1279815324f185,
+                    "Dark Mode" : tile_layer_d61ad3ad8a53d97e706a974a1eac3861,
+                    "\uae30\ubcf8 \uc9c0\ub3c4" : tile_layer_3021b0bc54231a32266784008e2b3b4d,
+                },
+                overlays :  {
+                    "\ud83d\udccd \uc218\uc694 \uc9c0\uc5ed" : feature_group_ca124d9f66c59890e9a90c0b4911b1ce,
+                    "\ud83d\udd34 \ucd5c\uc801\ud654 \ucd5c\uc6b0\uc120 \ub178\uc120" : feature_group_ce10ac1fcb78009ab729c310020f5756,
+                    "\ud83d\udfe1 \ucd5c\uc801\ud654 \ud544\uc694 \ub178\uc120" : feature_group_5f2db50a38b1536c7efc94bf4bfecfc2,
+                    "\ud83d\udfe2 \uc591\ud638\ud55c \ub178\uc120" : feature_group_0c243bf7406800c5d2c1317bcd3ab8ef,
+                },
+            };
+            let layer_control_334c4581a5df4e7011c45e9de0fdbec3 = L.control.layers(
+                layer_control_334c4581a5df4e7011c45e9de0fdbec3_layers.base_layers,
+                layer_control_334c4581a5df4e7011c45e9de0fdbec3_layers.overlays,
+                {
+  "position": "topright",
+  "collapsed": false,
+  "autoZIndex": true,
+}
+            ).addTo(map_0cbee0656bb3bbebdb0122bbf95f89eb);
+
+        
+</script>
+</html>
